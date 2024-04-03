@@ -6,7 +6,6 @@ public class Agent : MonoBehaviour, IDamageable
 {
     public AIBehaviourSelector AISelector { get; private set; }
     public BlackBoard BlackBoard { get; private set; }
-    // Start is called before the first frame update
     void Start()
     {
         OnInitialize();
@@ -20,7 +19,6 @@ public class Agent : MonoBehaviour, IDamageable
         AISelector.OnInitialize(BlackBoard);
     }
 
-    // Update is called once per frame
     void Update()
     {
         AISelector.OnUpdate();
@@ -33,12 +31,12 @@ public class Agent : MonoBehaviour, IDamageable
         distance.Value = transform.position.magnitude;
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float _damage)
     {
         FloatValue res = BlackBoard.GetFloatVariableValue(VariableType.Health);
         if (res)
         {
-            res.Value -= damage;
+            res.Value -= _damage;
         }
         AISelector.EvaluateBehaviours();
     }
@@ -47,5 +45,5 @@ public class Agent : MonoBehaviour, IDamageable
 
 public interface IDamageable
 {
-    void TakeDamage(float damage);
+    void TakeDamage(float _damage);
 }
