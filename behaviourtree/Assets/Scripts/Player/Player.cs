@@ -5,16 +5,18 @@ public class Player : MonoBehaviour, IDamageable
 {
     [SerializeField] private float walkSpeed = 3;
     [SerializeField] private float sprintSpeed = 6;
-    [SerializeField] private float health = 100;
+    public int MaxHealth { get; } = 100;
+    public int Health { get; private set; }
     
     private Rigidbody2D rb2d;
     private Animator animator;
     private Vector2 moveDirection;
-
-    public Action onPlayerDeath;
+    
+    public Action OnPlayerDeath;
     
     private void Awake()
     {
+        Health = MaxHealth;
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponentInChildren<Animator>();
     }
@@ -43,19 +45,19 @@ public class Player : MonoBehaviour, IDamageable
         }
     }
     
-    private void ChangeAnimation(string animationName, float fadeTime)
+    private void ChangeAnimation(string _animationName, float _fadeTime)
     {
-        if (!animator.GetCurrentAnimatorStateInfo(0).IsName(animationName) && !animator.IsInTransition(0))
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName(_animationName) && !animator.IsInTransition(0))
         {
-            animator.CrossFade(animationName, fadeTime);
+            animator.CrossFade(_animationName, _fadeTime);
         }
     }
-
-    public void TakeDamage(float damage)
+    
+    public void TakeDamage(int _damage)
     {
-        health -= damage;
+        Health -= _damage;
         
-        if (health <= 0)
+        if (Health <= 0)
         {
             Die();
         }
@@ -63,7 +65,7 @@ public class Player : MonoBehaviour, IDamageable
 
     private void Die()
     {
-        onPlayerDeath.Invoke();
         gameObject.SetActive(false);
+        OnPlayerDeath.Invoke();
     }
 }

@@ -3,26 +3,26 @@ using UnityEngine;
 
 public class Blackboard
 {
-    private Dictionary<string, object> dictionary = new Dictionary<string, object>();
+    private readonly Dictionary<string, object> dictionary = new Dictionary<string, object>();
 
-    public T GetVariable<T>(string name)
+    public T GetVariable<T>(string _name)
     {
-        if (dictionary.ContainsKey(name))
+        if (dictionary.ContainsKey(_name))
         {
-            return (T)dictionary[name];
+            return (T)dictionary[_name];
         }
         return default(T);
     }
 
-    public void SetVariable<T>(string name, T variable)
+    public void SetVariable<T>(string _name, T _variable)
     {
-        if (dictionary.ContainsKey(name))
+        if (dictionary.ContainsKey(_name))
         {
-            dictionary[name] = variable;
+            dictionary[_name] = _variable;
         }
         else
         {
-            dictionary.Add(name, variable);
+            dictionary.Add(_name, _variable);
         }
     }
 }

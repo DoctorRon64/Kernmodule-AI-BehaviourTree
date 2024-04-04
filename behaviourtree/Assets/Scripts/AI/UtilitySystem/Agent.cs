@@ -4,14 +4,17 @@ using UnityEngine;
 
 public class Agent : MonoBehaviour, IDamageable
 {
-    public AIBehaviourSelector AISelector { get; private set; }
-    public BlackBoard BlackBoard { get; private set; }
+    public int Health { get; }
+    public int MaxHealth { get; } = 100;
+
+    private AIBehaviourSelector AISelector { get; set; }
+    private BlackBoard BlackBoard { get; set; }
     void Start()
     {
         OnInitialize();
     }
 
-    public void OnInitialize()
+    private void OnInitialize()
     {
         AISelector = GetComponent<AIBehaviourSelector>();
         BlackBoard = GetComponent<BlackBoard>();
@@ -30,8 +33,8 @@ public class Agent : MonoBehaviour, IDamageable
         var distance = BlackBoard.GetFloatVariableValue(VariableType.Distance);
         distance.Value = transform.position.magnitude;
     }
-
-    public void TakeDamage(float _damage)
+    
+    public void TakeDamage(int _damage)
     {
         FloatValue res = BlackBoard.GetFloatVariableValue(VariableType.Health);
         if (res)
@@ -40,10 +43,17 @@ public class Agent : MonoBehaviour, IDamageable
         }
         AISelector.EvaluateBehaviours();
     }
+
+    public void Die()
+    {
+        //die
+    }
 }
 
 
 public interface IDamageable
 {
-    void TakeDamage(float _damage);
+    int Health { get; }
+    int MaxHealth { get; }
+    void TakeDamage(int _damage);
 }
