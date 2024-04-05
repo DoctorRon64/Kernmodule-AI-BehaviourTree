@@ -1,14 +1,18 @@
 ﻿using UnityEngine;
 
-public class BTPlayerInHood : BTBaseNode
+public class BTIsPlayerInHood : BTBaseNode
 {
     private readonly float playerDetectDistance;
     private Vector3 agentPosition;
 
-    public BTPlayerInHood(float _playerDetectDistance, Vector2 _agentPosition)
+    public BTIsPlayerInHood(float _playerDetectDistance, Vector2 _agentPosition)
     {
         this.playerDetectDistance = _playerDetectDistance;
         this.agentPosition = _agentPosition;
+    }
+
+    protected override void OnEnter()
+    {
     }
 
     protected override TaskStatus OnUpdate()

@@ -6,7 +6,7 @@ public class Player : MonoBehaviour, IDamageable
     [SerializeField] private float walkSpeed = 3;
     [SerializeField] private float sprintSpeed = 6;
     public int MaxHealth { get; } = 100;
-    public int Health { get; private set; }
+    public int Health { get; set; }
     
     private Rigidbody2D rb2d;
     private Animator animator;

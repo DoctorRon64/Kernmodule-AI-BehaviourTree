@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class Agent : MonoBehaviour, IDamageable
 {
-    public int Health { get; }
     public int MaxHealth { get; } = 100;
+    public int Health { get; set; }
 
     private AIBehaviourSelector AISelector { get; set; }
     private BlackBoard BlackBoard { get; set; }
     void Start()
     {
+        Health = MaxHealth;
         OnInitialize();
     }
 
@@ -53,7 +54,7 @@ public class Agent : MonoBehaviour, IDamageable
 
 public interface IDamageable
 {
-    int Health { get; }
     int MaxHealth { get; }
+    int Health { get; set; }
     void TakeDamage(int _damage);
 }

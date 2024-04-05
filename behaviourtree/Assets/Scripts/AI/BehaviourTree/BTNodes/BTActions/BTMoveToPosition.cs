@@ -61,6 +61,8 @@ public class BTGetNextPatrolPosition : BTBaseNode
 
     protected override void OnEnter()
     {
+        Debug.Log("patrol fase");
+        
         int currentIndex = blackboard.GetVariable<int>(VariableNames.CurrentPatrolIndex);
         currentIndex++;
         if(currentIndex >= wayPoints.Length)
