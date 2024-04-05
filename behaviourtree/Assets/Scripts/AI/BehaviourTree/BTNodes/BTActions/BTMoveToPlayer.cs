@@ -1,21 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
-public class BTMoveToPosition : BTBaseNode
+public class BTMoveToPlayer : BTBaseNode
 {
     private readonly NavMeshAgent agent;
     private readonly float moveSpeed;
     private readonly float keepDistance;
+    
     private Vector3 targetPosition;
-    private readonly string bBtargetPosition;
 
-    public BTMoveToPosition(NavMeshAgent _agent, float _moveSpeed, string _bBtargetPosition, float _keepDistance)
+    public BTMoveToPlayer(NavMeshAgent _agent, float _moveSpeed, float _keepDistance)
     {
         this.agent = _agent;
         this.moveSpeed = _moveSpeed;
-        this.bBtargetPosition = _bBtargetPosition;
         this.keepDistance = _keepDistance;
     }
 
@@ -23,7 +20,7 @@ public class BTMoveToPosition : BTBaseNode
     {
         agent.speed = moveSpeed;
         agent.stoppingDistance = keepDistance;
-        targetPosition = blackboard.GetVariable<Vector3>(bBtargetPosition);
+        targetPosition = blackboard.GetVariable<Transform>(VariableNames.PlayerTransform).position;
     }
 
     protected override TaskStatus OnUpdate()
@@ -50,32 +47,4 @@ public class BTMoveToPosition : BTBaseNode
         return TaskStatus.Running;
     }
 
-}
-
-public class BTGetNextPatrolPosition : BTBaseNode
-{
-    private readonly Transform[] wayPoints;
-    public BTGetNextPatrolPosition(Transform[] _wayPoints) 
-    {
-        this.wayPoints = _wayPoints;
-    }
-
-    protected override void OnEnter()
-    {
-        Debug.Log("patrol fase");
-        
-        int currentIndex = blackboard.GetVariable<int>(VariableNames.CurrentPatrolIndex);
-        currentIndex++;
-        if(currentIndex >= wayPoints.Length)
-        {
-            currentIndex = 0;
-        }
-        blackboard.SetVariable<int>(VariableNames.CurrentPatrolIndex, currentIndex);
-        blackboard.SetVariable<Vector3>(VariableNames.TargetPatrolPosition, wayPoints[currentIndex].position);
-    }
-
-    protected override TaskStatus OnUpdate()
-    {
-        return TaskStatus.Success;
-    }
 }

@@ -3,10 +3,10 @@
     private readonly BTBaseNode conditionNode;
     private readonly BTBaseNode actionNode;
 
-    public BTConditional(BTBaseNode conditionNode, BTBaseNode actionNode)
+    public BTConditional(BTBaseNode _conditionNode, BTBaseNode _actionNode)
     {
-        this.conditionNode = conditionNode;
-        this.actionNode = actionNode;
+        this.conditionNode = _conditionNode;
+        this.actionNode = _actionNode;
     }
 
     protected override TaskStatus OnUpdate()

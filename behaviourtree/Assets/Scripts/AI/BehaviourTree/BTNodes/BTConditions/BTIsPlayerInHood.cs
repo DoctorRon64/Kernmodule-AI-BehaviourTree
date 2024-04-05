@@ -7,6 +7,8 @@ public class BTIsPlayerInHood : BTBaseNode
 
     public BTIsPlayerInHood(float _playerDetectDistance, Vector2 _agentPosition)
     {
+        Debug.Log(this.GetType().Name);
+        
         this.playerDetectDistance = _playerDetectDistance;
         this.agentPosition = _agentPosition;
     }
@@ -17,7 +19,8 @@ public class BTIsPlayerInHood : BTBaseNode
 
     protected override TaskStatus OnUpdate()
     {
-        Vector3 playerPosition = blackboard.GetVariable<Transform>(VariableNames.PlayerTransform).position;
+        Transform player = blackboard.GetVariable<Transform>(VariableNames.PlayerTransform);
+        Vector3 playerPosition = player.position;
         float distanceToPlayer = Vector2.Distance(agentPosition, playerPosition);
 
         if (distanceToPlayer <= playerDetectDistance)

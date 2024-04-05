@@ -3,8 +3,8 @@
 public static class VariableNames
 {
     public const string EnemyHealth = "EnemyHealth";
-    public const string TargetPosition = "TargetPosition";
+    public const string TargetPatrolPosition = "TargetPatrolPosition";
     public const string CurrentPatrolIndex = "CurrentPatrolIndex";
     public const string PlayerTransform = "PlayerTransform";
-    public const string WeoponsInScene = "WeoponsInScene";
+    public const string TargetWeaponPosition = "TargetWeaponPosition";
 }
