@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,13 +12,13 @@ public class Guard : MonoBehaviour, IDamageable
     [SerializeField] private float keepPlayerDistance = 1f;
     [SerializeField] private float weaponDetectRange = 15f;
     [SerializeField] private float playerDetectRange = 5f;
-    public int MaxHealth { get; } = 100; 
+    public int MaxHealth { get; } = 100;
     public int Health { get; set; }
+    public Weapon Weapon = null;
 
     private Transform[] wayPoints;
     private BTBaseNode tree;
     private NavMeshAgent agent;
-    private Weapon weapon = null;
 
     private void Awake()
     {
@@ -40,15 +41,30 @@ public class Guard : MonoBehaviour, IDamageable
         tree = new BTRepeater(wayPoints.Length,
             new BTSelector(
                 new BTConditional(
+                    // Check if player is close
                     new BTIsPlayerInHood(playerDetectRange, transform.position),
-                    new BTSequence(
-                        new BTGetClosestWeaponPos(agent, weaponDetectRange),
-                        new BTMoveToWeapon(agent, moveSpeed, keepWeaponDistance),
-                        new BTMoveToPlayer(agent, moveSpeed, keepPlayerDistance)
-                        //new BTAttackPlayer(agent, blackboard.GetVariable<Transform>(VariableNames.PlayerTransform))
+                    new BTSelector(
+                        new BTConditional(
+                            // Check if guard has a weapon
+                            new BTGuardHasWeapon(Weapon, this),
+                            // Guard has a weapon, move to player and attack
+                            new BTRepeater(
+                                -1,
+                                new BTSequence(
+                                    new BTMoveToPlayer(agent, moveSpeed, keepPlayerDistance),
+                                    new BTAttackPlayer()
+                                )
+                            )
+                        ),
+                        new BTSequence(
+                            // Guard does not have a weapon, find closest weapon and move to it
+                            new BTGetClosestWeaponPos(agent, weaponDetectRange),
+                            new BTMoveToWeapon(agent, moveSpeed, keepWeaponDistance)
+                        )
                     )
                 ),
                 new BTSequence(
+                    // Patrol behavior
                     new BTGetNextPatrolPosition(wayPoints),
                     new BTMoveToPatrolPoint(agent, moveSpeed, keepPatrolDistance)
                 )
@@ -74,6 +90,14 @@ public class Guard : MonoBehaviour, IDamageable
 
     private void Die()
     {
-        
+    }
+
+    private void OnTriggerEnter2D(Collider2D _other)
+    {
+        if (!_other.TryGetComponent(out IPickupable pickup)) return;
+        pickup.Pickup();
+
+        if (pickup is not Weapon weapon) return;
+        Weapon = weapon;
     }
 }
