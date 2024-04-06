@@ -3,24 +3,27 @@
 public class BTIsPlayerInHood : BTBaseNode
 {
     private readonly float playerDetectDistance;
-    private Vector3 agentPosition;
+    private readonly Vector3 agentPosition;
+    private GameObject playerObject;
 
     public BTIsPlayerInHood(float _playerDetectDistance, Vector2 _agentPosition)
     {
-        Debug.Log(this.GetType().Name);
-        
         this.playerDetectDistance = _playerDetectDistance;
         this.agentPosition = _agentPosition;
+        playerObject = null;
     }
 
     protected override void OnEnter()
     {
+        EventManager.InvokeEvent(EventType.GuardText, GetType().Name);
+        playerObject = blackboard.GetVariable<GameObject>(  VariableNames.TargetPlayer);
     }
 
     protected override TaskStatus OnUpdate()
     {
-        Transform player = blackboard.GetVariable<Transform>(VariableNames.PlayerTransform);
-        Vector3 playerPosition = player.position;
+        if (playerObject == null)  return TaskStatus.Failed;
+        
+        Vector3 playerPosition = playerObject.transform.position;
         float distanceToPlayer = Vector2.Distance(agentPosition, playerPosition);
 
         if (distanceToPlayer <= playerDetectDistance)

@@ -8,22 +8,20 @@ public class BTMoveToPosition : BTBaseNode
     private readonly NavMeshAgent agent;
     private readonly float moveSpeed;
     private readonly float keepDistance;
-    private Vector3 targetPosition;
-    private readonly string bBtargetPosition;
+    protected Vector3 TargetPosition;
 
-    public BTMoveToPosition(NavMeshAgent _agent, float _moveSpeed, string _bBtargetPosition, float _keepDistance)
+    protected BTMoveToPosition(NavMeshAgent _agent, float _moveSpeed, float _keepDistance)
     {
         this.agent = _agent;
         this.moveSpeed = _moveSpeed;
-        this.bBtargetPosition = _bBtargetPosition;
         this.keepDistance = _keepDistance;
     }
 
     protected override void OnEnter()
     {
+        EventManager.InvokeEvent(EventType.GuardText, GetType().Name);
         agent.speed = moveSpeed;
         agent.stoppingDistance = keepDistance;
-        targetPosition = blackboard.GetVariable<Vector3>(bBtargetPosition);
     }
 
     protected override TaskStatus OnUpdate()
@@ -32,18 +30,18 @@ public class BTMoveToPosition : BTBaseNode
         if (agent.pathPending) { return TaskStatus.Running; }
         if (agent.hasPath && agent.path.status == NavMeshPathStatus.PathInvalid) { return TaskStatus.Failed; }
         
-        if (agent.pathEndPosition != targetPosition)
+        if (agent.pathEndPosition != TargetPosition)
         {
-            agent.SetDestination(targetPosition);
+            agent.SetDestination(TargetPosition);
             
             //rotate towards targetpos
-            Vector2 direction = (targetPosition - agent.transform.position).normalized;
+            Vector2 direction = (TargetPosition - agent.transform.position).normalized;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
             agent.transform.rotation = rotation;
         }
 
-        if(Vector2.Distance(agent.transform.position, targetPosition) <= keepDistance)
+        if(Vector2.Distance(agent.transform.position, TargetPosition) <= keepDistance)
         {
             return TaskStatus.Success;
         }
@@ -62,7 +60,7 @@ public class BTGetNextPatrolPosition : BTBaseNode
 
     protected override void OnEnter()
     {
-        Debug.Log("patrol fase");
+        EventManager.InvokeEvent(EventType.GuardText, "\"Get Next Patrol Pos\"");
         
         int currentIndex = blackboard.GetVariable<int>(VariableNames.CurrentPatrolIndex);
         currentIndex++;

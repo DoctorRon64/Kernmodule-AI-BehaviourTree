@@ -5,7 +5,7 @@ public class BTGetClosestWeaponPos : BTBaseNode
 {
     private readonly NavMeshAgent agent;
     private readonly float detectionRadius;
-    private Transform closestWeapon;
+    private GameObject closestWeapon;
     private TaskStatus status;
     
     public BTGetClosestWeaponPos(NavMeshAgent _agent, float _detectionRadius)
@@ -19,6 +19,7 @@ public class BTGetClosestWeaponPos : BTBaseNode
     
     protected override void OnEnter()
     {
+        EventManager.InvokeEvent(EventType.GuardText, GetType().Name);
         agent.stoppingDistance = detectionRadius;
         
         Collider2D[] colliders = Physics2D.OverlapCircleAll(agent.transform.position, detectionRadius);
@@ -26,16 +27,15 @@ public class BTGetClosestWeaponPos : BTBaseNode
         foreach (Collider2D collider in colliders)
         {
             if (!collider.TryGetComponent(out Weapon weapon)) continue;
-            Debug.Log(weapon + "weapon found!");
             if (!(Vector2.Distance(agent.transform.position, weapon.transform.position) <= detectionRadius)) continue;
-            Debug.Log(weapon + "weapon nearby!");
             
-            closestWeapon = weapon.transform;
+            closestWeapon = weapon.gameObject;
         }
+        Debug.Log("weapon nearby! on pos: " + closestWeapon.transform.position);
         
         if (closestWeapon != null)
         {
-            blackboard.SetVariable(VariableNames.TargetWeaponPosition, closestWeapon.position);
+            blackboard.SetVariable(VariableNames.TargetWeapon, closestWeapon);
         }
         else
         {

@@ -22,4 +22,11 @@
             return TaskStatus.Failed;
         }
     }
+    
+    public override void SetupBlackboard(Blackboard _blackboard)
+    {
+        base.SetupBlackboard(_blackboard);
+        conditionNode.SetupBlackboard(_blackboard);
+        actionNode.SetupBlackboard(_blackboard);
+    }
 }

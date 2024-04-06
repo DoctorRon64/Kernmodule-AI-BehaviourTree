@@ -29,9 +29,9 @@ public abstract class BTBaseNode
         return result;
     }
 
-    public virtual void SetupBlackboard(Blackboard blackboard)
+    public virtual void SetupBlackboard(Blackboard _blackboard)
     {
-        this.blackboard = blackboard;
+        this.blackboard = _blackboard;
     }
 
     //Protected Methods
