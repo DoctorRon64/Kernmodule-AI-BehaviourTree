@@ -367,6 +367,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &128593918
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 128593919}
+  m_Layer: 0
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &128593919
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 128593918}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.306, y: 0.145, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1887146820}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &160926154
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -442,6 +473,7 @@ GameObject:
   - component: {fileID: 327249925}
   - component: {fileID: 327249924}
   - component: {fileID: 327249923}
+  - component: {fileID: 327249927}
   m_Layer: 0
   m_Name: Border
   m_TagString: Untagged
@@ -644,6 +676,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 18.280556, y: 0.4647417}
   m_EdgeRadius: 0
+--- !u!114 &327249927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327249921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eff815624c5861348af80db170ac7259, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &332923951
 GameObject:
   m_ObjectHideFlags: 0
@@ -656,6 +700,7 @@ GameObject:
   - component: {fileID: 332923955}
   - component: {fileID: 332923954}
   - component: {fileID: 332923953}
+  - component: {fileID: 332923956}
   m_Layer: 0
   m_Name: Box
   m_TagString: Untagged
@@ -791,6 +836,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &332923956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 332923951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eff815624c5861348af80db170ac7259, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &339776189
 GameObject:
   m_ObjectHideFlags: 0
@@ -888,7 +945,7 @@ MonoBehaviour:
   moveSpeed: 3
   keepPatrolDistance: 1
   keepWeaponDistance: 0.5
-  keepPlayerDistance: 1
+  keepPlayerDistance: 2
   weaponDetectRange: 20
   playerDetectRange: 5
   Weapon: {fileID: 0}
@@ -1516,6 +1573,7 @@ GameObject:
   - component: {fileID: 1283119254}
   - component: {fileID: 1283119253}
   - component: {fileID: 1283119255}
+  - component: {fileID: 1283119256}
   m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
@@ -1652,6 +1710,18 @@ MonoBehaviour:
   m_Center: {x: 0, y: 0, z: 0}
   m_Area: 1
   m_AffectedAgents: ffffffff
+--- !u!114 &1283119256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1283119250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eff815624c5861348af80db170ac7259, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1494457434
 GameObject:
   m_ObjectHideFlags: 0
@@ -1962,7 +2032,8 @@ Transform:
   m_LocalPosition: {x: -5.26, y: 1.38, z: 0}
   m_LocalScale: {x: 1.9476494, y: 1.9476494, z: 1.9476494}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 128593919}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &1887146821
@@ -2022,6 +2093,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cedf4eed75f04574ab8b5e7b6e63e8e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  firePoint: {fileID: 128593919}
+  fireRate: 1
+  prefabBullet: {fileID: 4979907071907602347, guid: d58c9695f4bce9c4aa59be6a512107e8, type: 3}
 --- !u!50 &1887146823
 Rigidbody2D:
   serializedVersion: 4
