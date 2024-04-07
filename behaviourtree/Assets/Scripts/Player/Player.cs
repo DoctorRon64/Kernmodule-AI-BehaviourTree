@@ -12,8 +12,6 @@ public class Player : MonoBehaviour, IDamageable
     private Animator animator;
     private Vector2 moveDirection;
     
-    public Action OnPlayerDeath;
-    
     private void Awake()
     {
         Health = MaxHealth;
@@ -66,6 +64,6 @@ public class Player : MonoBehaviour, IDamageable
     private void Die()
     {
         gameObject.SetActive(false);
-        OnPlayerDeath.Invoke();
+        EventManager.Parameterless.InvokeEvent(EventType.onPlayerDied);
     }
 }

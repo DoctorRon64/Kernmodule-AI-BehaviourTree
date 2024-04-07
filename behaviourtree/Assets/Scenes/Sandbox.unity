@@ -528,7 +528,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -9.372377, y: 0}
+  m_Offset: {x: -9.431543, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -539,7 +539,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.1491623, y: 10.330835}
+  m_Size: {x: 1.0308304, y: 10.330835}
   m_EdgeRadius: 0
 --- !u!61 &327249924
 BoxCollider2D:
@@ -573,7 +573,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 8.949751, y: 0}
+  m_Offset: {x: 9.133759, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -584,7 +584,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.5027914, y: 10.15019}
+  m_Size: {x: 0.54695415, y: 10.15019}
   m_EdgeRadius: 0
 --- !u!61 &327249925
 BoxCollider2D:
@@ -618,7 +618,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -4.8975267}
+  m_Offset: {x: 0, y: -5.209936}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -629,7 +629,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 18.452013, y: 0.55256176}
+  m_Size: {x: 18.452013, y: 0.42759705}
   m_EdgeRadius: 0
 --- !u!61 &327249926
 BoxCollider2D:
@@ -663,7 +663,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 4.91445}
+  m_Offset: {x: -0.40111923, y: 5.260495}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -674,7 +674,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 18.280556, y: 0.4647417}
+  m_Size: {x: 19.082794, y: 0.49934578}
   m_EdgeRadius: 0
 --- !u!114 &327249927
 MonoBehaviour:
@@ -883,6 +883,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1494457435}
+  - {fileID: 1220419921}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &339776192
@@ -948,6 +949,7 @@ MonoBehaviour:
   keepPlayerDistance: 2
   weaponDetectRange: 20
   playerDetectRange: 5
+  shootingPoint: {fileID: 1220419921}
   Weapon: {fileID: 0}
 --- !u!195 &339776194
 NavMeshAgent:
@@ -1410,7 +1412,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8379389783717015014, guid: e109f38f0626848488d1fd3aca5f7d6a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.88
+      value: 6.3
       objectReference: {fileID: 0}
     - target: {fileID: 8379389783717015014, guid: e109f38f0626848488d1fd3aca5f7d6a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1467,7 +1469,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8379389783717015014, guid: e109f38f0626848488d1fd3aca5f7d6a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.87
+      value: 1.69
       objectReference: {fileID: 0}
     - target: {fileID: 8379389783717015014, guid: e109f38f0626848488d1fd3aca5f7d6a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1555,6 +1557,37 @@ Transform:
   - {fileID: 332923952}
   - {fileID: 327249922}
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1220419920
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1220419921}
+  m_Layer: 0
+  m_Name: ShootingPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1220419921
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1220419920}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 339776191}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1277250821 stripped
 Transform:
@@ -2094,7 +2127,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 1940123793695186525, guid: d58c9695f4bce9c4aa59be6a512107e8, type: 3}
-  shootingPoint: {fileID: 128593919}
   bulletAmount: 10
   bulletSpawnDistance: 1
   bulletSpeed: 10

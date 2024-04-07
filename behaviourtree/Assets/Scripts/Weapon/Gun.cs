@@ -9,8 +9,6 @@ public class Gun : Weapon
     [SerializeField] private float bulletSpawnDistance = 1.0f;
     [SerializeField] private float bulletSpeed = 10f;
     [SerializeField] private float fireRate = 0.2f;
-    
-    private Transform shootingPoint;
     private ObjectPool<Bullet> bulletPool;
     private bool isShooting;
     private float nextFireTime;
@@ -27,15 +25,12 @@ public class Gun : Weapon
     
     public void ShootBullet(Vector2 _direction, Transform _shootingPoint)
     {
-        shootingPoint = _shootingPoint;
-        //shootingPoint.localPosition = new Vector3(bulletSpawnDistance, 0f, 0f);
-        
         if (Time.time < nextFireTime)
             return;
-        
+
         nextFireTime = Time.time + fireRate;
-        
-        Bullet bullet = (Bullet)bulletPool.RequestObject(shootingPoint.position);
+        Bullet bullet = (Bullet)bulletPool.RequestObject(_shootingPoint.position);
+
         if (bullet == null) return;
         bullet.SetDirection(_direction, bulletSpeed);
         bullet.SetRotation(_direction);

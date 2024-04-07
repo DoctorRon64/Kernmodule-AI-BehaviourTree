@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 public enum EventType
 {
-    GuardText
+    GuardText,
+    onPlayerDied,
 }
 
 public static class EventManager

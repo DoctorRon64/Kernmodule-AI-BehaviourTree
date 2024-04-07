@@ -3,13 +3,16 @@
 public class BTAttackPlayer : BTBaseNode
 {
     private readonly Guard owner;
-    private Gun gun;
+    private readonly Transform shootingPoint;
     private Transform playerTransform;
+    private Gun gun;
+    private int shootAmoount;
     
-    public BTAttackPlayer(Gun _gun, Guard _owner)
+    public BTAttackPlayer(Gun _gun, Guard _owner, Transform _shootingPoint)
     {
         gun = _gun;
         owner = _owner;
+        shootingPoint = _shootingPoint;
     }
 
     protected override void OnEnter()
@@ -28,16 +31,20 @@ public class BTAttackPlayer : BTBaseNode
             return TaskStatus.Failed;
         }
         
-        Transform guardTransform = owner.transform;
-        Vector2 direction = (playerTransform.position - guardTransform.position).normalized;
-
-        // Shoot bullet in direction
-        gun.ShootBullet(direction, guardTransform);
+        //shoot
+        Vector2 direction = (playerTransform.position - owner.transform.position).normalized;
+        gun.ShootBullet(direction, shootingPoint);
         
-        // Rotate guard to face the player
+        //rotate
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         Quaternion rotation = Quaternion.Euler(0f, 0f, angle); 
-        guardTransform.rotation = rotation;
+        owner.transform.rotation = rotation;
+
+        shootAmoount++;
+        if (shootAmoount > 10)
+        {
+            return TaskStatus.Success;
+        }
         
         return TaskStatus.Running;
     }

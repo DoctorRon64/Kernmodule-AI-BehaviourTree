@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Guard : MonoBehaviour, IDamageable
+public class Guard : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float keepPatrolDistance = 1f;
@@ -12,8 +12,8 @@ public class Guard : MonoBehaviour, IDamageable
     [SerializeField] private float keepPlayerDistance = 1f;
     [SerializeField] private float weaponDetectRange = 15f;
     [SerializeField] private float playerDetectRange = 5f;
-    public int MaxHealth { get; } = 100;
-    public int Health { get; set; }
+
+    [SerializeField] private Transform shootingPoint;
     [HideInInspector] public Weapon Weapon = null;
 
     private Transform[] wayPoints;
@@ -22,7 +22,6 @@ public class Guard : MonoBehaviour, IDamageable
 
     private void Awake()
     {
-        Health = MaxHealth;
         agent = GetComponent<NavMeshAgent>();
         wayPoints = FindObjectsOfType<WayPoint>().Select(_waypoint => _waypoint.transform).ToArray();
     }
@@ -47,12 +46,9 @@ public class Guard : MonoBehaviour, IDamageable
                             // Check if guard has a weapon
                             new BTGuardHasWeapon(Weapon, this),
                             // Guard has a weapon, move to player and attack
-                            new BTRepeater(
-                                10,
-                                new BTSequence(
-                                    new BTMoveToPlayer(agent, moveSpeed, keepPlayerDistance),
-                                    new BTAttackPlayer((Gun)Weapon, this)
-                                )
+                            new BTSequence(
+                                new BTMoveToPlayer(agent, moveSpeed, keepPlayerDistance),
+                                new BTAttackPlayer((Gun)Weapon, this, shootingPoint)
                             )
                         ),
                         new BTSequence(
@@ -76,19 +72,6 @@ public class Guard : MonoBehaviour, IDamageable
     private void FixedUpdate()
     {
         TaskStatus result = tree.Tick();
-    }
-
-    public void TakeDamage(int _damage)
-    {
-        Health -= _damage;
-        if (Health <= 0)
-        {
-            Die();
-        }
-    }
-
-    private void Die()
-    {
     }
 
     private void OnTriggerEnter2D(Collider2D _other)
