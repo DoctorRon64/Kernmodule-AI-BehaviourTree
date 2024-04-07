@@ -14,7 +14,7 @@ public class Guard : MonoBehaviour, IDamageable
     [SerializeField] private float playerDetectRange = 5f;
     public int MaxHealth { get; } = 100;
     public int Health { get; set; }
-    public Weapon Weapon = null;
+    [HideInInspector] public Weapon Weapon = null;
 
     private Transform[] wayPoints;
     private BTBaseNode tree;
@@ -36,7 +36,6 @@ public class Guard : MonoBehaviour, IDamageable
 
         Player player = FindObjectOfType<Player>();
         blackboard.SetVariable(VariableNames.TargetPlayer, player.gameObject);
-        Debug.Log(blackboard.GetVariable<GameObject>(VariableNames.TargetPlayer));
 
         tree = new BTRepeater(wayPoints.Length,
             new BTSelector(
@@ -49,10 +48,10 @@ public class Guard : MonoBehaviour, IDamageable
                             new BTGuardHasWeapon(Weapon, this),
                             // Guard has a weapon, move to player and attack
                             new BTRepeater(
-                                -1,
+                                10,
                                 new BTSequence(
                                     new BTMoveToPlayer(agent, moveSpeed, keepPlayerDistance),
-                                    new BTAttackPlayer()
+                                    new BTAttackPlayer((Gun)Weapon, this)
                                 )
                             )
                         ),

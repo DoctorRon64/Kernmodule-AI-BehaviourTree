@@ -2093,9 +2093,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cedf4eed75f04574ab8b5e7b6e63e8e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  firePoint: {fileID: 128593919}
-  fireRate: 1
-  prefabBullet: {fileID: 4979907071907602347, guid: d58c9695f4bce9c4aa59be6a512107e8, type: 3}
+  bulletPrefab: {fileID: 1940123793695186525, guid: d58c9695f4bce9c4aa59be6a512107e8, type: 3}
+  shootingPoint: {fileID: 128593919}
+  bulletAmount: 10
+  bulletSpawnDistance: 1
+  bulletSpeed: 10
+  fireRate: 0.2
 --- !u!50 &1887146823
 Rigidbody2D:
   serializedVersion: 4

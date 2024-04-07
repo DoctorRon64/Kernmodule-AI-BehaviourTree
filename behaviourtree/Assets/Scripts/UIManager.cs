@@ -21,6 +21,7 @@ public class UIManager : MonoBehaviour
 
     private void UpdateGuardText(string _newText)
     {
+        Debug.Log(_newText);
         guardText.text = _newText;
     }
 }

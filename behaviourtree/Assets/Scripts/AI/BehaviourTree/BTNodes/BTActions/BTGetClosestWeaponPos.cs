@@ -10,8 +10,6 @@ public class BTGetClosestWeaponPos : BTBaseNode
     
     public BTGetClosestWeaponPos(NavMeshAgent _agent, float _detectionRadius)
     {
-        Debug.Log(this.GetType().Name);
-        
         agent = _agent;
         detectionRadius = _detectionRadius;
         status = TaskStatus.Running;
