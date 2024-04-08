@@ -6,14 +6,17 @@ using UnityEngine.AI;
 
 public class Guard : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 3f;
+    [Header("Patrol")] [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float keepPatrolDistance = 1f;
-    [SerializeField] private float keepWeaponDistance = 1f;
-    [SerializeField] private float keepPlayerDistance = 1f;
-    [SerializeField] private float weaponDetectRange = 15f;
-    [SerializeField] private float playerDetectRange = 5f;
 
+    [Header("Weapon")] [SerializeField] private float keepWeaponDistance = 1f;
+    [SerializeField] private float weaponDetectRange = 15f;
     [SerializeField] private Transform shootingPoint;
+
+    [Header("Player")] [SerializeField] private float keepPlayerDistance = 1f;
+    [SerializeField] private float playerDetectInRange = 6f;
+    [SerializeField] private float playerDetectOutRange = 5f;
+
     [HideInInspector] public Weapon Weapon = null;
 
     private Transform[] wayPoints;
@@ -47,16 +50,22 @@ public class Guard : MonoBehaviour
                 new BTSequence(
                     // Check if guard does not have a weapon and player is close
                     new BTConditional(
-                        new BTIsPlayerInHood(playerDetectRange, agentPosition),
+                        new BTIsPlayerInHood(playerDetectInRange, agentPosition),
                         new BTGuardHasNoWeapon(Weapon, this)
                     ),
                     // Guard does not have a weapon and player is close, go to the weapon
-                    new BTGetClosestWeaponPos(agent, weaponDetectRange),
-                    new BTMoveToWeapon(agent, moveSpeed, keepWeaponDistance)
+                    new BTConditional(
+                        // Ensure the guard doesn't have a weapon
+                        new BTGuardHasNoWeapon(Weapon, this),
+                        new BTSequence(
+                            new BTGetClosestWeaponPos(agent, weaponDetectRange),
+                            new BTMoveToWeapon(agent, moveSpeed, keepWeaponDistance)
+                        )
+                    )
                 ),
                 new BTConditional(
                     // Check if player is close
-                    new BTIsPlayerInHood(playerDetectRange, agentPosition),
+                    new BTIsPlayerInHood(playerDetectInRange, agentPosition),
                     new BTSelector(
                         new BTConditional(
                             // Check if guard has a weapon
@@ -64,14 +73,26 @@ public class Guard : MonoBehaviour
                             // Guard has a weapon, move to player and attack
                             new BTSequence(
                                 new BTMoveToPlayer(agent, moveSpeed, keepPlayerDistance),
-                                new BTAttackPlayer((Gun)Weapon, this, shootingPoint)
+                                new BTAttackPlayer((Gun)Weapon, this, shootingPoint),
+                                new BTConditional(
+                                    // Check if player is out of range
+                                    new BTIsPlayerOutHood(playerDetectOutRange, agentPosition),
+                                    // Player is out of range, return to patrolling
+                                    new BTSequence(
+                                        // Patrol behavior
+                                        new BTGetNextPatrolPosition(wayPoints),
+                                        new BTMoveToPatrolPoint(agent, moveSpeed, keepPatrolDistance)
+                                    )
+                                )
                             )
                         ),
-                        new BTSequence(
-                            // Guard does not have a weapon, find closest weapon and move to it
-                            new BTGetClosestWeaponPos(agent, weaponDetectRange),
-                            new BTMoveToWeapon(agent, moveSpeed, keepWeaponDistance),
-                            new BTMoveToPlayer(agent, moveSpeed, keepPlayerDistance)
+                        new BTConditional(
+                            // Guard has a weapon, move to player
+                            new BTGuardHasWeapon(Weapon, this),
+                            new BTSelector(
+                                new BTMoveToPlayer(agent, moveSpeed, keepPlayerDistance),
+                                new BTAttackPlayer((Gun)Weapon, this, shootingPoint)
+                            )
                         )
                     )
                 ),

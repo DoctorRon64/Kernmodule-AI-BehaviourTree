@@ -2,21 +2,21 @@
 
 public class BTIsPlayerInHood : BTBaseNode
 {
-    private readonly float playerDetectDistance;
-    private readonly Vector3 agentPosition;
-    private GameObject playerObject;
+    protected readonly float PlayerDetectDistance;
+    protected readonly Vector3 AgentPosition;
+    protected GameObject PlayerObject;
 
     public BTIsPlayerInHood(float _playerDetectDistance, Vector2 _agentPosition)
     {
-        this.playerDetectDistance = _playerDetectDistance;
-        this.agentPosition = _agentPosition;
+        this.PlayerDetectDistance = _playerDetectDistance;
+        this.AgentPosition = _agentPosition;
     }
     
     
     public override void SetupBlackboard(Blackboard _blackboard)
     {
         base.SetupBlackboard(_blackboard);
-        playerObject = blackboard.GetVariable<GameObject>(  VariableNames.TargetPlayer);
+        PlayerObject = blackboard.GetVariable<GameObject>(  VariableNames.TargetPlayer);
     }
 
     protected override void OnEnter()
@@ -26,12 +26,12 @@ public class BTIsPlayerInHood : BTBaseNode
 
     protected override TaskStatus OnUpdate()
     {
-        if (playerObject == null)  return TaskStatus.Failed;
+        if (PlayerObject == null)  return TaskStatus.Failed;
         
-        Vector3 playerPosition = playerObject.transform.position;
-        float distanceToPlayer = Vector2.Distance(agentPosition, playerPosition);
+        Vector3 playerPosition = PlayerObject.transform.position;
+        float distanceToPlayer = Vector2.Distance(AgentPosition, playerPosition);
 
-        if (distanceToPlayer <= playerDetectDistance)
+        if (distanceToPlayer <= PlayerDetectDistance)
         {
             return TaskStatus.Success;
         }
