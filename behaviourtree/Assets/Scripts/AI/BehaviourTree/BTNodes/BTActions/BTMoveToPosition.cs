@@ -30,16 +30,13 @@ public class BTMoveToPosition : BTBaseNode
         if (agent.pathPending) { return TaskStatus.Running; }
         if (agent.hasPath && agent.path.status == NavMeshPathStatus.PathInvalid) { return TaskStatus.Failed; }
         
-        if (agent.pathEndPosition != TargetPosition)
-        {
-            agent.SetDestination(TargetPosition);
+        agent.SetDestination(TargetPosition);
             
-            //rotate towards targetpos
-            Vector2 direction = (TargetPosition - agent.transform.position).normalized;
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-            agent.transform.rotation = rotation;
-        }
+        //rotate towards targetpos
+        Vector2 direction = (TargetPosition - agent.transform.position).normalized;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        agent.transform.rotation = rotation;
 
         if(Vector2.Distance(agent.transform.position, TargetPosition) <= keepDistance)
         {

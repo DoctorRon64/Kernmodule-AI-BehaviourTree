@@ -14,13 +14,17 @@ public class BTAttackPlayer : BTBaseNode
         owner = _owner;
         shootingPoint = _shootingPoint;
     }
+    
+    public override void SetupBlackboard(Blackboard _blackboard)
+    {
+        base.SetupBlackboard(_blackboard);
+        playerTransform = blackboard.GetVariable<GameObject>(VariableNames.TargetPlayer).transform;
+    }
 
     protected override void OnEnter()
     {
         EventManager.InvokeEvent(EventType.GuardText, GetType().Name);
-        
         if (gun == null) gun = (Gun)owner.Weapon;
-        playerTransform = blackboard.GetVariable<GameObject>(VariableNames.TargetPlayer).transform;
     }
 
     protected override TaskStatus OnUpdate()

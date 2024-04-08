@@ -10,13 +10,18 @@ public class BTIsPlayerInHood : BTBaseNode
     {
         this.playerDetectDistance = _playerDetectDistance;
         this.agentPosition = _agentPosition;
-        playerObject = null;
+    }
+    
+    
+    public override void SetupBlackboard(Blackboard _blackboard)
+    {
+        base.SetupBlackboard(_blackboard);
+        playerObject = blackboard.GetVariable<GameObject>(  VariableNames.TargetPlayer);
     }
 
     protected override void OnEnter()
     {
         EventManager.InvokeEvent(EventType.GuardText, GetType().Name);
-        playerObject = blackboard.GetVariable<GameObject>(  VariableNames.TargetPlayer);
     }
 
     protected override TaskStatus OnUpdate()

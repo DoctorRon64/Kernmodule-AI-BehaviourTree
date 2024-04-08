@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 public enum TaskStatus { Success, Failed, Running }
 public abstract class BTBaseNode
@@ -43,17 +42,17 @@ public abstract class BTBaseNode
 public abstract class BTComposite : BTBaseNode
 {
     protected BTBaseNode[] children;
-    public BTComposite (params BTBaseNode[] children)
+    public BTComposite (params BTBaseNode[] _children)
     {
-        this.children = children;
+        this.children = _children;
     }
 
-    public override void SetupBlackboard(Blackboard blackboard)
+    public override void SetupBlackboard(Blackboard _blackboard)
     {
-        base.SetupBlackboard(blackboard);
+        base.SetupBlackboard(_blackboard);
         foreach(BTBaseNode node in children)
         {
-            node.SetupBlackboard(blackboard);
+            node.SetupBlackboard(_blackboard);
         }
     }
 }
@@ -61,14 +60,14 @@ public abstract class BTComposite : BTBaseNode
 public abstract class BTDecorator : BTBaseNode
 {
     protected BTBaseNode child;
-    public BTDecorator(BTBaseNode child)
+    public BTDecorator(BTBaseNode _child)
     {
-        this.child = child;
+        this.child = _child;
     }
 
-    public override void SetupBlackboard(Blackboard blackboard)
+    public override void SetupBlackboard(Blackboard _blackboard)
     {
-        base.SetupBlackboard(blackboard);
-        child.SetupBlackboard(blackboard);
+        base.SetupBlackboard(_blackboard);
+        child.SetupBlackboard(_blackboard);
     }
 }

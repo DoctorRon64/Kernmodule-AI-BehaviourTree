@@ -1,15 +1,17 @@
-﻿public class BTPlayerDied : BTBaseNode
+﻿using Unity.VisualScripting;
+
+public class BTPlayerDied : BTBaseNode
 {
     private bool isPlayerDead;
     
     public BTPlayerDied()
     {
-        EventManager.Parameterless.AddListener(EventType.onPlayerDied, PlayerDeadToggle);
+        EventManager.AddListener<bool>(EventType.OnPlayerDied, PlayerDeadToggle);
     }
 
-    private void PlayerDeadToggle()
+    private void PlayerDeadToggle(bool _toggle)
     {
-        isPlayerDead = !isPlayerDead;
+        isPlayerDead = _toggle;
     }
     
     protected override TaskStatus OnUpdate()

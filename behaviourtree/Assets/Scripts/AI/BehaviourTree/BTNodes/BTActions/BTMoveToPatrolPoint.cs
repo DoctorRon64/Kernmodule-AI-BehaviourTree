@@ -8,7 +8,7 @@ public class BTMoveToPatrolPoint : BTMoveToPosition
         : base(_agent, _moveSpeed, _keepDistance)
     {
     }
-
+    
     protected override void OnEnter()
     {
         base.OnEnter();

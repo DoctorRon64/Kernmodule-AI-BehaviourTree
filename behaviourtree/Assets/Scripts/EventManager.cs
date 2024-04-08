@@ -4,7 +4,8 @@ using System.Collections.Generic;
 public enum EventType
 {
     GuardText,
-    onPlayerDied,
+    NinjaText,
+    OnPlayerDied,
 }
 
 public static class EventManager
@@ -45,7 +46,7 @@ public static class EventManager
         }
     }
 
-    public class Parameterless
+    public static class Parameterless
     {
         private static readonly Dictionary<EventType, Action> eventDictionary = new Dictionary<EventType, Action>();
 

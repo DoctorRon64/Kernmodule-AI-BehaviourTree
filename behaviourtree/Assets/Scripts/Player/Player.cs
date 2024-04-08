@@ -5,7 +5,7 @@ public class Player : MonoBehaviour, IDamageable
 {
     [SerializeField] private float walkSpeed = 3;
     [SerializeField] private float sprintSpeed = 6;
-    public int MaxHealth { get; } = 100;
+    [SerializeField] private int maxHealth = 30;
     public int Health { get; set; }
     
     private Rigidbody2D rb2d;
@@ -14,7 +14,7 @@ public class Player : MonoBehaviour, IDamageable
     
     private void Awake()
     {
-        Health = MaxHealth;
+        Health = maxHealth;
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponentInChildren<Animator>();
     }
@@ -63,7 +63,7 @@ public class Player : MonoBehaviour, IDamageable
 
     private void Die()
     {
+        EventManager.InvokeEvent(EventType.OnPlayerDied, true);
         gameObject.SetActive(false);
-        EventManager.Parameterless.InvokeEvent(EventType.onPlayerDied);
     }
 }
