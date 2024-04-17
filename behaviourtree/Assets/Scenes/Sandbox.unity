@@ -1163,10 +1163,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 3
   keepPatrolDistance: 0.5
-  keepWeaponDistance: 0.5
-  weaponDetectRange: 20
+  weaponKeepDistance: 1
+  weaponDetectInRange: 15
   shootingPoint: {fileID: 1220419921}
-  keepPlayerDistance: 2
+  playerKeepDistance: 1
   playerDetectInRange: 4
   playerDetectOutRange: 5
   Weapon: {fileID: 0}

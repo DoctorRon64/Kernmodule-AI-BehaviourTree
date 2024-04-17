@@ -18,6 +18,7 @@ public class UIManager : MonoBehaviour
     private void Awake()
     {
         EventManager.AddListener<string>(EventType.GuardText, UpdateGuardText);
+        EventManager.AddListener<string>(EventType.NinjaText, UpdateNinjaText);
     }
 
     private void Update()

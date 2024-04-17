@@ -12,7 +12,6 @@ public class BTIsPlayerInHood : BTBaseNode
         this.AgentPosition = _agentPosition;
     }
     
-    
     public override void SetupBlackboard(Blackboard _blackboard)
     {
         base.SetupBlackboard(_blackboard);
@@ -21,7 +20,7 @@ public class BTIsPlayerInHood : BTBaseNode
 
     protected override void OnEnter()
     {
-        //EventManager.InvokeEvent(EventType.GuardText, GetType().Name);
+        EventManager.InvokeEvent(EventType.GuardText, GetType().Name);
     }
 
     protected override TaskStatus OnUpdate()

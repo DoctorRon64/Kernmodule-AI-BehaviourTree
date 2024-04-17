@@ -5,7 +5,7 @@ public class BTRepeater : BTDecorator
 {
     private int amount = 0;
     private int currentLoop = 0;
-    public BTRepeater(int amount, BTBaseNode child) : base(child){ this.amount = amount; }
+    public BTRepeater(int _amount, BTBaseNode _child) : base(_child){ this.amount = _amount; }
 
     protected override TaskStatus OnUpdate()
     {
