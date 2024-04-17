@@ -103,6 +103,24 @@ public class Guard : MonoBehaviour
                 )
             )
         );
+        
+        /*new BTSequence(
+        // Patrol behavior
+        new BTGetNextPatrolPosition(wayPoints),
+        new BTMoveToPatrolPoint(agent, moveSpeed, keepPatrolDistance)
+        )*/
+
+        /*new BTSequence(
+            new BTGetClosestWeaponPos(agent, weaponDetectRange),
+            new BTMoveToWeapon(agent, moveSpeed, keepWeaponDistance)
+            new BTMoveToPlayer(agent, moveSpeed, keepPlayerDistance)
+        )*/
+
+        /*new BTSequence(
+                new BTMoveToPlayer(agent, moveSpeed, keepPlayerDistance),
+                new BTAttackPlayer((Gun)Weapon, this, shootingPoint),
+        )*/
+        
 
         tree.SetupBlackboard(blackboard);
     }

@@ -9,17 +9,25 @@ public class Ninja : MonoBehaviour
     
     private BTBaseNode tree;
     private NavMeshAgent agent;
-    private Animator animator;
+    private Blackboard blackboard;
+    
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        animator = GetComponentInChildren<Animator>();
+
+        this.SetupBlackboard();
+    }
+    
+    private void SetupBlackboard()
+    {
+        blackboard = new Blackboard();
+
+        Player player = FindObjectOfType<Player>();
+        blackboard.SetVariable(VariableNames.TargetPlayer, player.gameObject);
     }
 
     private void Start()
     {
-        Blackboard blackboard = new Blackboard();
-        
         Player player = FindObjectOfType<Player>();
         blackboard.SetVariable(VariableNames.TargetPlayer, player.gameObject);
         

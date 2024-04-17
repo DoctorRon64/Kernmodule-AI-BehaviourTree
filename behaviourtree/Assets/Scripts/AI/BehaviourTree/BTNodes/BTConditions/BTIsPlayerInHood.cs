@@ -21,7 +21,7 @@ public class BTIsPlayerInHood : BTBaseNode
 
     protected override void OnEnter()
     {
-        EventManager.InvokeEvent(EventType.GuardText, GetType().Name);
+        //EventManager.InvokeEvent(EventType.GuardText, GetType().Name);
     }
 
     protected override TaskStatus OnUpdate()

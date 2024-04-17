@@ -64,6 +64,7 @@ public class Player : MonoBehaviour, IDamageable
     private void Die()
     {
         EventManager.InvokeEvent(EventType.OnPlayerDied, true);
+        Debug.Log("player Died");
         gameObject.SetActive(false);
     }
 }
