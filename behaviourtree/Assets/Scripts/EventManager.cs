@@ -11,71 +11,62 @@ public enum EventType
 
 public static class EventManager
 {
-    private static Dictionary<EventType, Delegate> eventDictionary = new Dictionary<EventType, Delegate>();
+    private static readonly Dictionary<EventType, Delegate> pmEventDictionary = new Dictionary<EventType, Delegate>();
+    private static readonly Dictionary<EventType, Action> eventDictionary = new Dictionary<EventType, Action>();
 
     public static void AddListener<T>(EventType _type, Action<T> _action)
+    {
+        if (!pmEventDictionary.ContainsKey(_type))
+        {
+            pmEventDictionary.Add(_type, null);
+        }
+
+        pmEventDictionary[_type] = (Action<T>)pmEventDictionary[_type] + _action;
+    }
+
+    public static void AddListener(EventType _type, Action _action)
     {
         if (!eventDictionary.ContainsKey(_type))
         {
             eventDictionary.Add(_type, null);
         }
-        eventDictionary[_type] = (Action<T>)eventDictionary[_type] + _action;
+
+        eventDictionary[_type] += _action;
+    }
+
+    public static void InvokeEvent<T>(EventType _type, T _parameter)
+    {
+        if (pmEventDictionary.ContainsKey(_type) && pmEventDictionary[_type] != null)
+        {
+            ((Action<T>)pmEventDictionary[_type])?.Invoke(_parameter);
+        }
+    }
+
+    public static void InvokeEvent(EventType _type)
+    {
+        eventDictionary[_type]?.Invoke();
     }
 
     public static void RemoveListener<T>(EventType _type, Action<T> _action)
     {
-        if (eventDictionary.TryGetValue(_type, out Delegate currentEvent))
+        if (!pmEventDictionary.TryGetValue(_type, out Delegate currentEvent)) return;
+        if (currentEvent != null)
         {
-            if (currentEvent != null)
-            {
-                eventDictionary[_type] = (Action<T>)currentEvent - _action;
-            }
+            pmEventDictionary[_type] = (Action<T>)currentEvent - _action;
+        }
+    }
+
+    public static void RemoveListener(EventType _type, Action _action)
+    {
+        if (eventDictionary.ContainsKey(_type) && eventDictionary[_type] != null)
+        {
+            eventDictionary[_type] -= _action;
         }
     }
 
     public static void RemoveAllListeners()
     {
+        pmEventDictionary.Clear();
         eventDictionary.Clear();
-        Parameterless.RemoveAllListeners();
-    }
-    
-    public static void InvokeEvent<T>(EventType _type, T _parameter)
-    {
-        if (eventDictionary.ContainsKey(_type) && eventDictionary[_type] != null)
-        {
-            ((Action<T>)eventDictionary[_type])?.Invoke(_parameter);
-        }
-    }
-
-    public static class Parameterless
-    {
-        private static readonly Dictionary<EventType, Action> eventDictionary = new Dictionary<EventType, Action>();
-
-        public static void AddListener(EventType _type, Action _action)
-        {
-            if (!eventDictionary.ContainsKey(_type))
-            {
-                eventDictionary.Add(_type, null);
-            }
-            eventDictionary[_type] += _action;
-        }
-        
-        public static void RemoveListener(EventType _type, Action _action)
-        {
-            if (eventDictionary.ContainsKey(_type) && eventDictionary[_type] != null)
-            {
-                eventDictionary[_type] -= _action;
-            }
-        }
-
-        public static void RemoveAllListeners()
-        {
-            eventDictionary.Clear();
-        }
-
-        public static void InvokeEvent(EventType _type)
-        {
-            eventDictionary[_type]?.Invoke();
-        }
     }
 }

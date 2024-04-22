@@ -173,6 +173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkSpeed: 3
   sprintSpeed: 6
+  rotationSpeed: 7
   maxHealth: 30
 --- !u!61 &44315763
 BoxCollider2D:
@@ -1168,6 +1169,7 @@ MonoBehaviour:
   shootingPoint: {fileID: 1220419921}
   playerKeepDistance: 1
   playerDetectInRange: 4
+  playerDetectInAttackRange: 6
   playerDetectOutRange: 5
   Weapon: {fileID: 0}
 --- !u!195 &339776194
@@ -1222,7 +1224,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!195 &464419934
 NavMeshAgent:
   m_ObjectHideFlags: 0

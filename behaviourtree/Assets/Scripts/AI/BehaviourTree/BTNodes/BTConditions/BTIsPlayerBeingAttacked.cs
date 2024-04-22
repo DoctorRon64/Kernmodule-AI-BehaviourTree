@@ -1,14 +1,17 @@
-﻿public class BTIsPlayerBeingAttacked : BTBaseNode
+﻿using UnityEngine;
+
+public class BTIsPlayerBeingAttacked : BTBaseNode
 {
     private bool isPlayerBeingAttacked;
 
     public BTIsPlayerBeingAttacked()
     {
-        EventManager.Parameterless.AddListener(EventType.OnPlayerAttack, HandlePlayerAttacked);
+        EventManager.AddListener(EventType.OnPlayerAttack, HandlePlayerAttacked);
     }
-
+    
     private void HandlePlayerAttacked()
     {
+        Debug.Log("Player Is Being Attacked");
         isPlayerBeingAttacked = true;
     }
 
@@ -16,7 +19,7 @@
     {
         if (isPlayerBeingAttacked)
         {
-            EventManager.Parameterless.InvokeEvent(EventType.OnPlayerAttack);
+            EventManager.InvokeEvent(EventType.OnPlayerAttack);
             return TaskStatus.Success;
         }
         else

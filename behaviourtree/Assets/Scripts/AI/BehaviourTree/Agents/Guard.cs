@@ -15,6 +15,7 @@ public class Guard : MonoBehaviour
 
     [Header("Player")] [SerializeField] private float playerKeepDistance = 1f;
     [SerializeField] private float playerDetectInRange = 6f;
+    [SerializeField] private float playerDetectInAttackRange = 6f;
     [SerializeField] private float playerDetectOutRange = 5f;
 
     [HideInInspector] public Weapon Weapon = null;
@@ -59,9 +60,9 @@ public class Guard : MonoBehaviour
                             new BTRepeater(
                                 1, // Only repeat once
                                 new BTSequence(
-                                    new BTIsPlayerInHood(playerDetectInRange, transform.position),
+                                    new BTIsPlayerInHood(playerDetectInAttackRange, transform.position),
                                     new BTAttackPlayer((Gun)Weapon, this, shootingPoint),
-                                    new BTMoveToPlayer(agent, moveSpeed, playerKeepDistance)
+                                    new BTMoveToPlayer(agent, moveSpeed, playerDetectInAttackRange)
                                 )
                             )
                         ),
