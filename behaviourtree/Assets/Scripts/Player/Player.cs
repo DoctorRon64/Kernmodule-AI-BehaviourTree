@@ -53,6 +53,7 @@ public class Player : MonoBehaviour, IDamageable
     
     public void TakeDamage(int _damage)
     {
+        EventManager.Parameterless.InvokeEvent(EventType.OnPlayerAttack);
         Health -= _damage;
         
         if (Health <= 0)

@@ -39,7 +39,7 @@ public class Ninja : MonoBehaviour
                         // Follow the player within a certain distance
                         new BTMoveToPlayer(agent, moveSpeed, maxFollowDistance)
                     )
-                )/*,
+                ),
                 new BTConditional(
                     // Check if the player is being attacked
                     new BTIsPlayerBeingAttacked(playerTransform),
@@ -49,7 +49,7 @@ public class Ninja : MonoBehaviour
                         // After finding cover, throw bombs at the guard
                         new BTThrowBombs(agent, guardTransform, bombPrefab)
                     )
-                )#1#
+                )
             )
         );*/
     }

@@ -44,31 +44,37 @@ public class Guard : MonoBehaviour
 
     private void Start()
     {
+        //player in hood 
         tree = new BTRepeater(wayPoints.Length,
             new BTSelector(
-                // If player is nearby and guard has no weapon
+                // Check if player is nearby
                 new BTConditional(
                     new BTIsPlayerInHood(playerDetectInRange, transform.position),
-                    new BTSequence(
-                        new BTSequence(
+                    // If player is nearby
+                    new BTSelector(
+                        // Check if guard has a weapon
+                        new BTConditional(
                             new BTGuardHasWeapon(Weapon, this),
-                            // If the enemy has a weapon, pursue and attack player
-                            new BTSequence(
-                                new BTMoveToPlayer(agent, moveSpeed, playerKeepDistance),
-                                new BTAttackPlayer((Gun)Weapon, this, shootingPoint)
+                            // If guard has a weapon, attack player
+                            new BTRepeater(
+                                1, // Only repeat once
+                                new BTSequence(
+                                    new BTIsPlayerInHood(playerDetectInRange, transform.position),
+                                    new BTAttackPlayer((Gun)Weapon, this, shootingPoint),
+                                    new BTMoveToPlayer(agent, moveSpeed, playerKeepDistance)
+                                )
                             )
                         ),
+                        // If guard doesn't have a weapon, search for one
                         new BTSelector(
-                            // If a weapon is nearby, go to it
                             new BTSequence(
                                 new BTGetClosestWeaponPos(agent, weaponDetectInRange),
-                                new BTMoveToWeapon(agent, moveSpeed, weaponKeepDistance),
-                                new BTMoveToPlayer(agent, moveSpeed, playerKeepDistance)
+                                new BTMoveToWeapon(agent, moveSpeed, weaponKeepDistance)
                             )
                         )
                     )
                 ),
-                // If the player is not nearby, patrol
+                // If player is not nearby, patrol
                 new BTSequence(
                     new BTGetNextPatrolPosition(wayPoints),
                     new BTMoveToPatrolPoint(agent, moveSpeed, keepPatrolDistance)

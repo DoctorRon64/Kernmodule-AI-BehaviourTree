@@ -6,6 +6,7 @@ public enum EventType
     GuardText,
     NinjaText,
     OnPlayerDied,
+    OnPlayerAttack,
 }
 
 public static class EventManager
@@ -58,11 +59,13 @@ public static class EventManager
             }
             eventDictionary[_type] += _action;
         }
-
+        
         public static void RemoveListener(EventType _type, Action _action)
         {
-            if (eventDictionary.ContainsKey(_type) && eventDictionary[_type] != null) { }
-            eventDictionary[_type] -= _action;
+            if (eventDictionary.ContainsKey(_type) && eventDictionary[_type] != null)
+            {
+                eventDictionary[_type] -= _action;
+            }
         }
 
         public static void RemoveAllListeners()
