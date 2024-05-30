@@ -13,5 +13,6 @@ public class BTMoveToPlayer : BTMoveToPosition
     {
         base.OnEnter();
         TargetPosition = blackboard.GetVariable<GameObject>(VariableNames.TargetPlayer).transform.position;
+        Debug.Log("TargetPosition is: " + TargetPosition + "Player Pos");
     }
 }

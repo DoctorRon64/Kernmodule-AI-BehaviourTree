@@ -31,7 +31,7 @@ public class Ninja : MonoBehaviour
         Player player = FindObjectOfType<Player>();
         blackboard.SetVariable(VariableNames.TargetPlayer, player.gameObject);
         
-        tree = new BTRepeater(-1,
+        /*tree = new BTRepeater(-1,
             new BTSelector(
                 new BTConditional(
                     new BTIsPlayerInHood(playerDetectRange, transform.position),
@@ -45,13 +45,13 @@ public class Ninja : MonoBehaviour
                     new BTIsPlayerBeingAttacked(),
                     new BTSequence(
                         // Search for cover to hide behind
-                        /*new BTFindCover(agent, coverPoints),
+                        *//*new BTFindCover(agent, coverPoints),
                         // After finding cover, throw bombs at the guard
-                        new BTThrowBombs(agent, guardTransform, bombPrefab)*/
+                        new BTThrowBombs(agent, guardTransform, bombPrefab)*//*
                     )
                 )
             )
-        );
+        );*/
     }
 
     private void FixedUpdate()

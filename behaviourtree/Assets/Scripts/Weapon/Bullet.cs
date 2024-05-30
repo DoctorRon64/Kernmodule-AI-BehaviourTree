@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 public class Bullet : MonoBehaviour, IPoolable
 {
@@ -5,20 +6,21 @@ public class Bullet : MonoBehaviour, IPoolable
 	private ObjectPool<Bullet> objectPool;
 	public bool Active { get; set; }
 	private readonly int damageValue = 1;
+
 	public void SetupBullet(ObjectPool<Bullet> _pool)
 	{
 		rb = GetComponent<Rigidbody2D>();
 		objectPool = _pool;
 	}
-
-	public void SetDirection(Vector2 _direction, float _speed)
+	
+    public void SetDirection(Vector2 _direction, float _speed)
 	{
 		rb.velocity = _direction.normalized * _speed;
 	}
 
-	public void SetRotation(Vector2 direction)
+	public void SetRotation(Vector2 _direction)
 	{
-		float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+		float angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;
 		transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 	}
 

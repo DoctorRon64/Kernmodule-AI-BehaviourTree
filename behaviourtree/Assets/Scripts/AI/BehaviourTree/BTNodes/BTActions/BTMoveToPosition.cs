@@ -20,16 +20,22 @@ public class BTMoveToPosition : BTBaseNode
     protected override void OnEnter()
     {
         EventManager.InvokeEvent(EventType.GuardText, GetType().Name);
+        
+        if (agent == null) { Debug.LogError("NavMeshAgent is null!"); return; }
+        if (!NavMesh.SamplePosition(TargetPosition, out NavMeshHit hit, 1.0f, NavMesh.AllAreas)) { Debug.LogError("Invalid Target Position!"); return; }
+        
         agent.speed = moveSpeed;
         agent.stoppingDistance = keepDistance;
     }
 
     protected override TaskStatus OnUpdate()
     {
-        if (agent == null) { return TaskStatus.Failed; }
-        if (agent.pathPending) { return TaskStatus.Running; }
-        if (agent.hasPath && agent.path.status == NavMeshPathStatus.PathInvalid) { return TaskStatus.Failed; }
+        if (agent == null) { Debug.LogWarning("agent = null"); return TaskStatus.Failed; }
+        if (agent.pathPending) { Debug.LogWarning("pathpending = running"); return TaskStatus.Running;}
+        if (agent.path.status == NavMeshPathStatus.PathInvalid) {  Debug.LogWarning("Path is invalid!"); return TaskStatus.Failed; }
+        if (agent.isStopped) { Debug.LogWarning("Agent is stopped!"); return TaskStatus.Failed; }
         
+        TargetPosition.z = agent.transform.position.z;
         agent.SetDestination(TargetPosition);
             
         //rotate towards targetpos
@@ -38,7 +44,7 @@ public class BTMoveToPosition : BTBaseNode
         Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         agent.transform.rotation = rotation;
 
-        if(Vector2.Distance(agent.transform.position, TargetPosition) <= keepDistance)
+        if (Vector2.Distance(agent.transform.position, TargetPosition) <= keepDistance)
         {
             return TaskStatus.Success;
         }

@@ -27,9 +27,7 @@ public class BTIsPlayerInHood : BTBaseNode
     {
         if (PlayerObject == null)  return TaskStatus.Failed;
         
-        Vector3 playerPosition = PlayerObject.transform.position;
-        float distanceToPlayer = Vector2.Distance(AgentPosition, playerPosition);
-
+        float distanceToPlayer = Vector2.Distance(AgentPosition, PlayerObject.transform.position);
         if (distanceToPlayer <= PlayerDetectDistance)
         {
             return TaskStatus.Success;

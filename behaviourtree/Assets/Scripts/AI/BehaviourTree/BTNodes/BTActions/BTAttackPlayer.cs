@@ -25,6 +25,7 @@ public class BTAttackPlayer : BTBaseNode
     {
         EventManager.InvokeEvent(EventType.GuardText, GetType().Name);
         if (gun == null) gun = (Gun)owner.Weapon;
+        shootAmoount = 0;
     }
 
     protected override TaskStatus OnUpdate()
@@ -44,12 +45,16 @@ public class BTAttackPlayer : BTBaseNode
         Quaternion rotation = Quaternion.Euler(0f, 0f, angle); 
         owner.transform.rotation = rotation;
 
+        /*
         shootAmoount++;
         if (shootAmoount > 10)
         {
-            return TaskStatus.Success;
+            
         }
         
         return TaskStatus.Running;
+        */
+        
+        return TaskStatus.Success;
     }
 }

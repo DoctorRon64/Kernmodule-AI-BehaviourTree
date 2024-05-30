@@ -9,7 +9,10 @@ public abstract class BTBaseNode
     private bool wasEntered = false;
 
     //Public Methods
-    public virtual void OnReset() { }
+    public virtual void OnReset()
+    {
+        wasEntered = false;
+    }
 
     public TaskStatus Tick()
     {
@@ -55,6 +58,14 @@ public abstract class BTComposite : BTBaseNode
             node.SetupBlackboard(_blackboard);
         }
     }
+    
+    public override void OnReset()
+    {
+        foreach (BTBaseNode child in children)
+        {
+            child.OnReset();
+        }
+    }
 }
 
 public abstract class BTDecorator : BTBaseNode
@@ -69,5 +80,10 @@ public abstract class BTDecorator : BTBaseNode
     {
         base.SetupBlackboard(_blackboard);
         child.SetupBlackboard(_blackboard);
+    }
+    
+    public override void OnReset()
+    {
+        child.OnReset();
     }
 }

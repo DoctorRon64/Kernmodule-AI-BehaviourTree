@@ -18,12 +18,18 @@ public class Guard : MonoBehaviour
     [SerializeField] private float playerDetectInAttackRange = 6f;
     [SerializeField] private float playerDetectOutRange = 5f;
 
-    [HideInInspector] public Weapon Weapon = null;
+    public Weapon Weapon = null;
+
+    public delegate bool ConditionDelegate();
 
     private Transform[] wayPoints;
     private BTBaseNode tree;
     private NavMeshAgent agent;
     private Blackboard blackboard;
+
+    private bool isPickingUpWeapon = false;
+    private bool isPlayerDead = false;
+    private bool breakPoint = false;
 
     private void Awake()
     {
@@ -41,47 +47,64 @@ public class Guard : MonoBehaviour
 
         Player player = FindObjectOfType<Player>();
         blackboard.SetVariable(VariableNames.TargetPlayer, player.gameObject);
+        EventManager.AddListener<bool>(EventType.OnPlayerDied, PlayerDeadToggle);
     }
 
     private void Start()
     {
-        //player in hood 
-        tree = new BTRepeater(wayPoints.Length,
+        tree = new BTRepeater(-1, // Repeat indefinitely
             new BTSelector(
-                // Check if player is nearby
-                new BTConditional(
-                    new BTIsPlayerInHood(playerDetectInRange, transform.position),
-                    // If player is nearby
+                new BTConditional(() => isPickingUpWeapon,
+                    new BTSequence(
+                        new BTGetClosestWeaponPos(agent, weaponDetectInRange),
+                        new BTMoveToWeapon(agent, moveSpeed, weaponKeepDistance),
+                        new BTAction(() =>
+                        {
+                            isPickingUpWeapon = false;
+                            return TaskStatus.Success;
+                        })
+                    )
+                ),
+                new BTConditional(() => !IsPlayerNearby() && !HasWeapon(),
+                    new BTSequence(
+                        new BTGetNextPatrolPosition(wayPoints),
+                        new BTMoveToPatrolPoint(agent, moveSpeed, keepPatrolDistance)
+                    )
+                ),
+                new BTConditional(HasWeapon,
                     new BTSelector(
-                        // Check if guard has a weapon
-                        new BTConditional(
-                            new BTGuardHasWeapon(Weapon, this),
-                            // If guard has a weapon, attack player
-                            new BTRepeater(
-                                1, // Only repeat once
+                        new BTConditional(IsPlayerNearby,
+                            new BTRepeater(-1,
                                 new BTSequence(
-                                    new BTIsPlayerInHood(playerDetectInAttackRange, transform.position),
                                     new BTAttackPlayer((Gun)Weapon, this, shootingPoint),
                                     new BTMoveToPlayer(agent, moveSpeed, playerDetectInAttackRange)
                                 )
                             )
                         ),
-                        // If guard doesn't have a weapon, search for one
-                        new BTSelector(
+                        new BTConditional(() => !isPlayerDead && !IsPlayerNearby(),
                             new BTSequence(
-                                new BTGetClosestWeaponPos(agent, weaponDetectInRange),
-                                new BTMoveToWeapon(agent, moveSpeed, weaponKeepDistance)
+                                new BTGetNextPatrolPosition(wayPoints),
+                                new BTMoveToPatrolPoint(agent, moveSpeed, keepPatrolDistance)
                             )
                         )
                     )
                 ),
-                // If player is not nearby, patrol
-                new BTSequence(
-                    new BTGetNextPatrolPosition(wayPoints),
-                    new BTMoveToPatrolPoint(agent, moveSpeed, keepPatrolDistance)
+                new BTConditional(() => !HasWeapon() && !isPickingUpWeapon,
+                    new BTSequence(
+                        new BTAction(() =>
+                        {
+                            isPickingUpWeapon = true;
+                            return TaskStatus.Success;
+                        }),
+                        new BTGetClosestWeaponPos(agent, weaponDetectInRange),
+                        new BTMoveToWeapon(agent, moveSpeed, weaponKeepDistance)
+                    )
                 )
             )
         );
+
+        tree.SetupBlackboard(blackboard);
+
 
         /*new BTSequence(
             // Patrol behavior
@@ -99,8 +122,6 @@ public class Guard : MonoBehaviour
             new BTMoveToPlayer(agent, moveSpeed, keepPlayerDistance),
             new BTAttackPlayer((Gun)Weapon, this, shootingPoint),
         )*/
-
-        tree.SetupBlackboard(blackboard);
     }
 
     private void OnDisable()
@@ -111,7 +132,34 @@ public class Guard : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (breakPoint)
+        {
+            tree.OnReset();
+            breakPoint = false;
+        }
+
         TaskStatus result = tree.Tick();
+    }
+
+    private void PlayerDeadToggle(bool _toggle)
+    {
+        isPlayerDead = _toggle;
+        breakPoint = true;
+        Debug.Log("IsPlayerActive SET to: " + _toggle);
+    }
+
+    private bool IsPlayerNearby()
+    {
+        GameObject player = blackboard.GetVariable<GameObject>(VariableNames.TargetPlayer);
+        if (player == null) { Debug.Log("player not nearby"); return false;}
+
+        float distanceToPlayer = Vector2.Distance(transform.position, player.transform.position);
+        return distanceToPlayer <= playerDetectInRange;
+    }
+    
+    private bool HasWeapon()
+    {
+        return Weapon != null;
     }
 
     private void OnTriggerEnter2D(Collider2D _other)
