@@ -9,7 +9,7 @@ public class BTMoveToWeapon : BTMoveToPosition
 
     protected override void OnEnter()
     {
-        base.OnEnter();
         TargetPosition = blackboard.GetVariable<GameObject>(VariableNames.TargetWeapon).transform.position;
+        base.OnEnter();
     }
 }

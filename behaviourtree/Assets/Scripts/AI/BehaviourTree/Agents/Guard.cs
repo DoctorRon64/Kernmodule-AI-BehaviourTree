@@ -58,6 +58,7 @@ public class Guard : MonoBehaviour
                     new BTSequence(
                         new BTGetClosestWeaponPos(agent, weaponDetectInRange),
                         new BTMoveToWeapon(agent, moveSpeed, weaponKeepDistance),
+                        new BTMoveToPlayer(agent, moveSpeed, playerKeepDistance),
                         new BTAction(() =>
                         {
                             isPickingUpWeapon = false;

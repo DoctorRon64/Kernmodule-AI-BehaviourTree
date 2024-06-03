@@ -7,6 +7,8 @@ public class Player : MonoBehaviour, IDamageable
     [SerializeField] private float sprintSpeed = 6.0f;
     [SerializeField] private float rotationSpeed = 2.0f;
     [SerializeField] private int maxHealth = 30;
+    [SerializeField] private bool invulnerable = false;
+    
     public int Health { get; set; }
     
     private Rigidbody2D rb2d;
@@ -42,6 +44,7 @@ public class Player : MonoBehaviour, IDamageable
     public void TakeDamage(int _damage)
     {
         //EventManager.InvokeEvent(EventType.OnPlayerAttack);
+        if (invulnerable) return;
         Health -= _damage;
         
         if (Health <= 0)

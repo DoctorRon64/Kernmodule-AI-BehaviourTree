@@ -175,6 +175,7 @@ MonoBehaviour:
   sprintSpeed: 6
   rotationSpeed: 7
   maxHealth: 30
+  invulnerable: 1
 --- !u!61 &44315763
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1167,7 +1168,7 @@ MonoBehaviour:
   weaponKeepDistance: 1
   weaponDetectInRange: 15
   shootingPoint: {fileID: 1220419921}
-  playerKeepDistance: 1
+  playerKeepDistance: 2
   playerDetectInRange: 4
   playerDetectInAttackRange: 6
   playerDetectOutRange: 5
@@ -2520,7 +2521,7 @@ Transform:
   m_GameObject: {fileID: 1888445677}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.305, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

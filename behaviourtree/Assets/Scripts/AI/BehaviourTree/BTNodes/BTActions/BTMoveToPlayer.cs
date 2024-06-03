@@ -11,8 +11,7 @@ public class BTMoveToPlayer : BTMoveToPosition
     
     protected override void OnEnter()
     {
-        base.OnEnter();
         TargetPosition = blackboard.GetVariable<GameObject>(VariableNames.TargetPlayer).transform.position;
-        Debug.Log("TargetPosition is: " + TargetPosition + "Player Pos");
+        base.OnEnter();
     }
 }

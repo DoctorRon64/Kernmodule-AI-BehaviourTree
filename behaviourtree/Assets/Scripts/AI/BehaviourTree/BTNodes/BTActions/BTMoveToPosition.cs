@@ -32,12 +32,14 @@ public class BTMoveToPosition : BTBaseNode
     {
         if (agent == null) { Debug.LogWarning("agent = null"); return TaskStatus.Failed; }
         if (agent.pathPending) { Debug.LogWarning("pathpending = running"); return TaskStatus.Running;}
-        if (agent.path.status == NavMeshPathStatus.PathInvalid) {  Debug.LogWarning("Path is invalid!"); return TaskStatus.Failed; }
         if (agent.isStopped) { Debug.LogWarning("Agent is stopped!"); return TaskStatus.Failed; }
         
         TargetPosition.z = agent.transform.position.z;
+        if (agent.destination == TargetPosition) return TaskStatus.Failed;
+
+        Debug.Log("target destiiniatiiion = " + TargetPosition);        
         agent.SetDestination(TargetPosition);
-            
+
         //rotate towards targetpos
         Vector2 direction = (TargetPosition - agent.transform.position).normalized;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;

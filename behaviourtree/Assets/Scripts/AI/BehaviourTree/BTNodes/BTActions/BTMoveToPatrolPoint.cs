@@ -11,8 +11,7 @@ public class BTMoveToPatrolPoint : BTMoveToPosition
     
     protected override void OnEnter()
     {
-        base.OnEnter();
         TargetPosition = blackboard.GetVariable<Vector3>(VariableNames.TargetPatrolPosition); 
-        Debug.Log(TargetPosition +  "Waypoint" + blackboard.GetVariable<Vector3>(VariableNames.TargetPatrolPosition));
+        base.OnEnter();
     }
 }
