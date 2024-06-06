@@ -52,6 +52,12 @@ public class Guard : MonoBehaviour
 
     private void Start()
     {
+        /*tree = new BTSequence(
+            new BTGetClosestWeaponPos(agent, weaponDetectInRange),
+            new BTMoveToWeapon(agent, moveSpeed, weaponKeepDistance),
+            new BTMoveToPlayer(agent, moveSpeed, playerKeepDistance)
+        );*/
+        
         tree = new BTRepeater(-1, // Repeat indefinitely
             new BTSelector(
                 new BTConditional(() => isPickingUpWeapon,
@@ -75,12 +81,12 @@ public class Guard : MonoBehaviour
                 new BTConditional(HasWeapon,
                     new BTSelector(
                         new BTConditional(IsPlayerNearby,
-                            new BTRepeater(-1,
+                            //new BTRepeater(-1,
                                 new BTSequence(
                                     new BTAttackPlayer((Gun)Weapon, this, shootingPoint),
                                     new BTMoveToPlayer(agent, moveSpeed, playerDetectInAttackRange)
                                 )
-                            )
+                           // )
                         ),
                         new BTConditional(() => !isPlayerDead && !IsPlayerNearby(),
                             new BTSequence(
