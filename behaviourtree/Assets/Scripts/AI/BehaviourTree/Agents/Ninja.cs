@@ -1,61 +1,81 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 using UnityEngine.AI;
 
 public class Ninja : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float playerDetectRange = 1f;
+    [SerializeField] private float playerKeepDistance = 1f;
     [SerializeField] private float maxFollowDistance = 3f;
+    [SerializeField] private GameObject smokeBombPrefab;
+    [SerializeField] private Transform throwPoint;
     
+    private Transform[] coverPoints;
     private BTBaseNode tree;
     private NavMeshAgent agent;
     private Blackboard blackboard;
+
+    private bool isPlayerBeingAttacked = false;
     
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-
-        this.SetupBlackboard();
-    }
-    
-    private void SetupBlackboard()
-    {
-        blackboard = new Blackboard();
-
+        coverPoints = FindObjectsOfType<WayPoint>().Select(_coverPoints => _coverPoints.transform).ToArray();
+        
         Player player = FindObjectOfType<Player>();
+        blackboard = new Blackboard();
         blackboard.SetVariable(VariableNames.TargetPlayer, player.gameObject);
+        
+        EventManager.AddListener(EventType.OnPlayerAttacked, PlayerBeingAttacked);
     }
 
     private void Start()
     {
-        Player player = FindObjectOfType<Player>();
-        blackboard.SetVariable(VariableNames.TargetPlayer, player.gameObject);
-        
-        /*tree = new BTRepeater(-1,
+        tree = new BTRepeater(-1,
             new BTSelector(
                 new BTConditional(
-                    new BTIsPlayerInHood(playerDetectRange, transform.position),
+                    () => IsPlayerInHood(playerDetectRange, transform.position),
                     new BTSequence(
-                        // Follow the player within a certain distance
                         new BTMoveToPlayer(agent, moveSpeed, maxFollowDistance)
                     )
                 ),
                 new BTConditional(
-                    // Check if the player is being attacked
-                    new BTIsPlayerBeingAttacked(),
+                    () => isPlayerBeingAttacked,
                     new BTSequence(
-                        // Search for cover to hide behind
-                        *//*new BTFindCover(agent, coverPoints),
-                        // After finding cover, throw bombs at the guard
-                        new BTThrowBombs(agent, guardTransform, bombPrefab)*//*
+                        new BTFindCover(coverPoints, transform),
+                        new BTMoveToCover(agent, moveSpeed, playerKeepDistance),
+                        new BTThrowSmokeBomb(AttackContext.CurrentAttacker.transform, smokeBombPrefab, throwPoint)
                     )
                 )
             )
-        );*/
+        );
+
+        tree.SetupBlackboard(blackboard);
     }
 
     private void FixedUpdate()
     {
-        tree?.Tick();
+        TaskStatus result = tree.Tick();
     }
+
+    private void PlayerBeingAttacked()
+    {
+        Debug.Log("player is getting Attacked!");
+        isPlayerBeingAttacked = !isPlayerBeingAttacked;
+    }
+
+    private bool IsPlayerInHood(float _range, Vector3 _position)
+    {
+        GameObject player = blackboard.GetVariable<GameObject>(VariableNames.TargetPlayer);
+        if (player == null) return false;
+
+        float distanceToPlayer = Vector3.Distance(_position, player.transform.position);
+        return distanceToPlayer <= _range;
+    }
+}
+
+public static class AttackContext
+{
+    public static GameObject CurrentAttacker { get; set; }
 }

@@ -1,15 +1,15 @@
-﻿using System;
-using System.Linq;
-using Unity.VisualScripting;
+﻿using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Guard : MonoBehaviour
 {
-    [Header("Patrol")] [SerializeField] private float moveSpeed = 3f;
+    [Header("Patrol")] 
+    [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float keepPatrolDistance = 1f;
 
-    [Header("Weapon")] [SerializeField] private float weaponKeepDistance = 1f;
+    [Header("Weapon")] 
+    [SerializeField] private float weaponKeepDistance = 1f;
     [SerializeField] private float weaponDetectInRange = 15f;
     [SerializeField] private Transform shootingPoint;
 
@@ -19,8 +19,6 @@ public class Guard : MonoBehaviour
     [SerializeField] private float playerDetectOutRange = 5f;
 
     public Weapon Weapon = null;
-
-    public delegate bool ConditionDelegate();
 
     private Transform[] wayPoints;
     private BTBaseNode tree;
@@ -52,12 +50,6 @@ public class Guard : MonoBehaviour
 
     private void Start()
     {
-        /*tree = new BTSequence(
-            new BTGetClosestWeaponPos(agent, weaponDetectInRange),
-            new BTMoveToWeapon(agent, moveSpeed, weaponKeepDistance),
-            new BTMoveToPlayer(agent, moveSpeed, playerKeepDistance)
-        );*/
-        
         tree = new BTRepeater(-1, // Repeat indefinitely
             new BTSelector(
                 new BTConditional(() => isPickingUpWeapon,
@@ -72,28 +64,17 @@ public class Guard : MonoBehaviour
                         })
                     )
                 ),
-                new BTConditional(() => !IsPlayerNearby() && !HasWeapon(),
-                    new BTSequence(
-                        new BTGetNextPatrolPosition(wayPoints),
-                        new BTMoveToPatrolPoint(agent, moveSpeed, keepPatrolDistance)
-                    )
-                ),
+                new BTConditional(() => isPlayerDead, CreatePatrolSequence()),
+                new BTConditional(() => !IsPlayerNearby() && !HasWeapon(), CreatePatrolSequence()),
                 new BTConditional(HasWeapon,
                     new BTSelector(
                         new BTConditional(IsPlayerNearby,
-                            //new BTRepeater(-1,
-                                new BTSequence(
-                                    new BTAttackPlayer((Gun)Weapon, this, shootingPoint),
-                                    new BTMoveToPlayer(agent, moveSpeed, playerDetectInAttackRange)
-                                )
-                           // )
-                        ),
-                        new BTConditional(() => !isPlayerDead && !IsPlayerNearby(),
                             new BTSequence(
-                                new BTGetNextPatrolPosition(wayPoints),
-                                new BTMoveToPatrolPoint(agent, moveSpeed, keepPatrolDistance)
+                                new BTAttackPlayer((Gun)Weapon, this, shootingPoint),
+                                new BTMoveToPlayer(agent, moveSpeed, playerDetectInAttackRange)
                             )
-                        )
+                        ),
+                        new BTConditional(() => !isPlayerDead && !IsPlayerNearby(), CreatePatrolSequence())
                     )
                 ),
                 new BTConditional(() => !HasWeapon() && !isPickingUpWeapon,
@@ -111,24 +92,6 @@ public class Guard : MonoBehaviour
         );
 
         tree.SetupBlackboard(blackboard);
-
-
-        /*new BTSequence(
-            // Patrol behavior
-            new BTGetNextPatrolPosition(wayPoints),
-            new BTMoveToPatrolPoint(agent, moveSpeed, keepPatrolDistance)
-        )*/
-
-        /*new BTSequence(
-            new BTGetClosestWeaponPos(agent, weaponDetectRange),
-            new BTMoveToWeapon(agent, moveSpeed, keepWeaponDistance)
-            new BTMoveToPlayer(agent, moveSpeed, keepPlayerDistance)
-        )*/
-
-        /*new BTSequence(
-            new BTMoveToPlayer(agent, moveSpeed, keepPlayerDistance),
-            new BTAttackPlayer((Gun)Weapon, this, shootingPoint),
-        )*/
     }
 
     private void OnDisable()
@@ -158,12 +121,16 @@ public class Guard : MonoBehaviour
     private bool IsPlayerNearby()
     {
         GameObject player = blackboard.GetVariable<GameObject>(VariableNames.TargetPlayer);
-        if (player == null) { Debug.Log("player not nearby"); return false;}
+        if (player == null)
+        {
+            Debug.Log("player not nearby");
+            return false;
+        }
 
         float distanceToPlayer = Vector2.Distance(transform.position, player.transform.position);
         return distanceToPlayer <= playerDetectInRange;
     }
-    
+
     private bool HasWeapon()
     {
         return Weapon != null;
@@ -176,5 +143,13 @@ public class Guard : MonoBehaviour
 
         if (pickup is not Weapon weapon) return;
         Weapon = weapon;
+    }
+    
+    private BTSequence CreatePatrolSequence()
+    {
+        return new BTSequence(
+            new BTGetNextPatrolPosition(wayPoints),
+            new BTMoveToPatrolPoint(agent, moveSpeed, keepPatrolDistance)
+        );
     }
 }

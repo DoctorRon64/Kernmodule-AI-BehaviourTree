@@ -77,7 +77,7 @@ public class BTGetNextPatrolPosition : BTBaseNode
 
     protected override void OnEnter()
     {
-        EventManager.InvokeEvent(EventType.GuardText, "\"Get Next Patrol Pos\"");
+        EventManager.InvokeEvent(EventType.GuardText, GetType().Name);
         
         int currentIndex = blackboard.GetVariable<int>(VariableNames.CurrentPatrolIndex);
         currentIndex++;
@@ -85,8 +85,8 @@ public class BTGetNextPatrolPosition : BTBaseNode
         {
             currentIndex = 0;
         }
-        blackboard.SetVariable<int>(VariableNames.CurrentPatrolIndex, currentIndex);
-        blackboard.SetVariable<Vector3>(VariableNames.TargetPatrolPosition, wayPoints[currentIndex].position);
+        blackboard.SetVariable(VariableNames.CurrentPatrolIndex, currentIndex);
+        blackboard.SetVariable(VariableNames.TargetPatrolPosition, wayPoints[currentIndex].position);
     }
 
     protected override TaskStatus OnUpdate()

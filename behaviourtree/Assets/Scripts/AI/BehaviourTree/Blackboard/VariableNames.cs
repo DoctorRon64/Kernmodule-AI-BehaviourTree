@@ -7,4 +7,5 @@ public static class VariableNames
     public const string TargetPatrolPosition = "TargetPatrolPosition";
     public const string TargetPlayer = "TargetPlayer";
     public const string TargetWeapon = "TargetWeapon";
+    public const string CoverPos = "CoverPosition";
 }
