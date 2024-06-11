@@ -1,20 +1,28 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Guard : MonoBehaviour
+public class Guard : MonoBehaviour, IStunnable
 {
-    [Header("Patrol")] [SerializeField] private float moveSpeed = 3f;
+    [Header("Patrol")] 
+    [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float keepPatrolDistance = 1f;
 
-    [Header("Weapon")] [SerializeField] private float weaponKeepDistance = 1f;
+    [Header("Weapon")]
+    [SerializeField] private float weaponKeepDistance = 1f;
     [SerializeField] private float weaponDetectInRange = 15f;
     [SerializeField] private Transform shootingPoint;
 
-    [Header("Player")] [SerializeField] private float playerKeepDistance = 1f;
+    [Header("Player")]
+    [SerializeField] private float playerKeepDistance = 1f;
     [SerializeField] private float playerKeepAttackDistance = 2f;
     [SerializeField] private float playerDetectInRange = 5f;
-
+    
+    [Header("Stun")]
+    [SerializeField] private float stunDelay = 5f;
+    private Coroutine resetStunCoroutine;
+    
     public Item item = null;
 
     private Transform[] wayPoints;
@@ -27,6 +35,7 @@ public class Guard : MonoBehaviour
     private bool isPickingUpWeapon = false;
     private bool isPlayerDead = false;
     private bool breakPoint = false;
+    private bool isGuardStunned = false;
 
     private void Awake()
     {
@@ -156,5 +165,22 @@ public class Guard : MonoBehaviour
                 return TaskStatus.Success;
             })
         );
+    }
+
+    public void Stun()
+    {
+        Debug.Log("Character stunned!");
+        isGuardStunned = true;
+        
+        if (resetStunCoroutine != null) StopCoroutine(resetStunCoroutine);
+        resetStunCoroutine = StartCoroutine(ResetStun());
+    }
+
+    private IEnumerator ResetStun()
+    {
+        yield return new WaitForSeconds(stunDelay);
+        
+        Debug.Log("Character recovered from stun!");
+        isGuardStunned = false;
     }
 }

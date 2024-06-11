@@ -6,7 +6,6 @@ public class BTAttackPlayer : BTBaseNode
     private readonly Transform shootingPoint;
     private Transform playerTransform;
     private Gun gun;
-    private int shootAmoount;
     
     public BTAttackPlayer(Gun _gun, Guard _owner, Transform _shootingPoint)
     {
@@ -25,7 +24,6 @@ public class BTAttackPlayer : BTBaseNode
     {
         EventManager.InvokeEvent(EventType.GuardText, GetType().Name);
         if (gun == null) gun = (Gun)owner.item;
-        shootAmoount = 0;
     }
 
     protected override TaskStatus OnUpdate()
@@ -48,11 +46,5 @@ public class BTAttackPlayer : BTBaseNode
 
         
         return TaskStatus.Success;
-    }
-
-    protected override void OnExit()
-    {
-        base.OnExit();
-        EventManager.InvokeEvent<Transform>(EventType.AttackerTarget, null);
     }
 }

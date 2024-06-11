@@ -1,17 +1,17 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using static VariableNames;
 
 public class Bomb : MonoBehaviour, IPoolable
 {
     private Rigidbody2D rb2d;
     private ObjectPool<Bomb> objectPool;
-    public Transform owner;
     public bool Active { get; set; }
     private readonly int damageValue = 1;
 
     public void SetupBomb(ObjectPool<Bomb> _pool)
     {
         rb2d = GetComponent<Rigidbody2D>();
-        rb2d.gravityScale = 1; 
         objectPool = _pool;
     }
     
@@ -27,10 +27,12 @@ public class Bomb : MonoBehaviour, IPoolable
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
 
-    private void OnTriggerEnter2D(Collider2D _other)
+    private void OnCollisionEnter2D(Collision2D _other)
     {
         if (_other.gameObject.TryGetComponent(out IDamageable damageable))
         {
+            if (_other.gameObject.layer == LayerMask.NameToLayer(VariableNames.Player)) return; 
+            
             damageable.TakeDamage(damageValue);
             DisablePoolabe();
             objectPool.DeactivateItem(this);

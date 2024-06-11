@@ -6,7 +6,6 @@ public class Gun : Item
     [Header("Shooting")] 
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private int bulletAmount = 10;
-    [SerializeField] private float bulletSpawnDistance = 1.0f;
     [SerializeField] private float bulletSpeed = 10f;
     [SerializeField] private float fireRate = 0.2f;
     private ObjectPool<Bullet> bulletPool;

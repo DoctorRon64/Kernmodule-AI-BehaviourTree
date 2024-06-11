@@ -32,8 +32,8 @@ public class BTMoveToPosition : BTBaseNode
     protected override TaskStatus OnUpdate()
     {
         if (agent == null) { Debug.LogWarning("agent = null"); return TaskStatus.Failed; }
-        if (agent.pathPending) { Debug.LogWarning("pathpending = running"); return TaskStatus.Running;}
         if (agent.isStopped) { Debug.LogWarning("Agent is stopped!"); return TaskStatus.Failed; }
+        if (agent.pathPending) { return TaskStatus.Running;}
 
         TargetPosition.z = 0;
         agent.speed = moveSpeed;

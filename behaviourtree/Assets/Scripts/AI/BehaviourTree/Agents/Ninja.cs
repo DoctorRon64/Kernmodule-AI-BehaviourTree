@@ -4,20 +4,25 @@ using UnityEngine.AI;
 
 public class Ninja : MonoBehaviour
 {
+    [Header("movement")]
     [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float playerDetectRange = 1f;
-    [SerializeField] private float playerKeepDistance = 1f;
     [SerializeField] private float coverKeepDistance = 0.4f;
     [SerializeField] private float maxFollowDistance = 3f;
+    
+    [Header("bombs")]
     [SerializeField] private GameObject smokeBombPrefab;
     [SerializeField] private Transform throwPoint;
+    
+    [SerializeField] private int bombAmount = 10;
+    [SerializeField] private float throwForce = 10f;
+    [SerializeField] private float fireRate = 0.2f;
 
     private Transform[] coverPoints;
     private BTBaseNode tree;
     private NavMeshAgent agent;
     private Blackboard blackboard;
 
-    private Transform currentAttacker = null;
     private bool isPlayerBeingAttacked = false;
 
     private void Awake()
@@ -38,7 +43,8 @@ public class Ninja : MonoBehaviour
 
     private void Start()
     {
-        EventType ninjaText = EventType.NinjaText;
+        BombController bombController = new BombController(smokeBombPrefab, bombAmount, throwForce, fireRate);
+        const EventType ninjaText = EventType.NinjaText;
 
         tree = new BTRepeater(coverPoints.Length,
             new BTSelector(
@@ -47,7 +53,7 @@ public class Ninja : MonoBehaviour
                     new BTSequence(
                         new BTFindCover(coverPoints, transform),
                         new BTMoveToCover(agent, ninjaText, moveSpeed, coverKeepDistance),
-                        new BTThrowSmokeBomb(smokeBombPrefab, throwPoint, currentAttacker)
+                        new BTThrowSmokeBomb(bombController, throwPoint)
                     )
                 ),
                 new BTConditional(
@@ -88,9 +94,9 @@ public class Ninja : MonoBehaviour
         return distanceToPlayer <= _range;
     }
 
-    private void SetAttacker(Transform _transform)
+    private void SetAttacker(Transform _newAttacker)
     {
-        currentAttacker = _transform;
-        Debug.Log("Current Attacker = " + currentAttacker);
+        Debug.Log("Current Attacker = " + _newAttacker);
+        blackboard.SetVariable(VariableNames.TargetEnemy, _newAttacker);
     }
 }
