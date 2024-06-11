@@ -7,7 +7,6 @@ public class Bomb : MonoBehaviour, IPoolable
     private Rigidbody2D rb2d;
     private ObjectPool<Bomb> objectPool;
     public bool Active { get; set; }
-    private readonly int damageValue = 1;
 
     public void SetupBomb(ObjectPool<Bomb> _pool)
     {
@@ -29,11 +28,11 @@ public class Bomb : MonoBehaviour, IPoolable
 
     private void OnCollisionEnter2D(Collision2D _other)
     {
-        if (_other.gameObject.TryGetComponent(out IDamageable damageable))
+        if (_other.gameObject.TryGetComponent(out IStunnable stunnable))
         {
-            if (_other.gameObject.layer == LayerMask.NameToLayer(VariableNames.Player)) return; 
+            //if (_other.gameObject.layer == LayerMask.NameToLayer(VariableNames.Player)) return; 
             
-            damageable.TakeDamage(damageValue);
+            stunnable.Stun();
             DisablePoolabe();
             objectPool.DeactivateItem(this);
         }

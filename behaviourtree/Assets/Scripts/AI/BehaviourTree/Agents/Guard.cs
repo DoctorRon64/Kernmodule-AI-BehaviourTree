@@ -111,6 +111,11 @@ public class Guard : MonoBehaviour, IStunnable
 
     private void FixedUpdate()
     {
+        if (isGuardStunned)
+        {
+            return;
+        }
+        
         if (breakPoint)
         {
             tree.OnReset();
@@ -171,6 +176,7 @@ public class Guard : MonoBehaviour, IStunnable
     {
         Debug.Log("Character stunned!");
         isGuardStunned = true;
+        EventManager.InvokeEvent(EventType.OnPlayerAttack, false);
         
         if (resetStunCoroutine != null) StopCoroutine(resetStunCoroutine);
         resetStunCoroutine = StartCoroutine(ResetStun());

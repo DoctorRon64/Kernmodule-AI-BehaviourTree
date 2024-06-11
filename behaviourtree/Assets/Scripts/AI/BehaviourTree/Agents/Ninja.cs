@@ -4,16 +4,14 @@ using UnityEngine.AI;
 
 public class Ninja : MonoBehaviour
 {
-    [Header("movement")]
-    [SerializeField] private float moveSpeed = 3f;
+    [Header("movement")] [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float playerDetectRange = 1f;
     [SerializeField] private float coverKeepDistance = 0.4f;
     [SerializeField] private float maxFollowDistance = 3f;
-    
-    [Header("bombs")]
-    [SerializeField] private GameObject smokeBombPrefab;
+
+    [Header("bombs")] [SerializeField] private GameObject smokeBombPrefab;
     [SerializeField] private Transform throwPoint;
-    
+
     [SerializeField] private int bombAmount = 10;
     [SerializeField] private float throwForce = 10f;
     [SerializeField] private float fireRate = 0.2f;
@@ -50,10 +48,12 @@ public class Ninja : MonoBehaviour
             new BTSelector(
                 new BTConditional(
                     () => isPlayerBeingAttacked,
-                    new BTSequence(
-                        new BTFindCover(coverPoints, transform),
-                        new BTMoveToCover(agent, ninjaText, moveSpeed, coverKeepDistance),
-                        new BTThrowSmokeBomb(bombController, throwPoint)
+                    new BTRepeater(3,
+                        new BTSequence(
+                            new BTFindCover(coverPoints, transform),
+                            new BTMoveToCover(agent, ninjaText, moveSpeed, coverKeepDistance),
+                            new BTThrowSmokeBomb(bombController, throwPoint)
+                        )
                     )
                 ),
                 new BTConditional(

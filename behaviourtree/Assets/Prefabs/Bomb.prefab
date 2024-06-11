@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 622499689310241552}
   - component: {fileID: 7720675653484731010}
   - component: {fileID: -5595538179905146573}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Bomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,7 +121,8 @@ GameObject:
   - component: {fileID: 3349953011597446300}
   - component: {fileID: 5803247586118266283}
   - component: {fileID: 532717898762978439}
-  m_Layer: 0
+  - component: {fileID: 289593968518703436}
+  m_Layer: 7
   m_Name: Particle System
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4940,6 +4941,18 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &289593968518703436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2203691574082216518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 625290408907c5b4ba00f36830fe0a16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6922274120829075768
 GameObject:
   m_ObjectHideFlags: 0
@@ -4950,7 +4963,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4696106020572402464}
   - component: {fileID: 712009343502396668}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
