@@ -24,7 +24,7 @@ public class BTGetClosestWeaponPos : BTBaseNode
 
         foreach (Collider2D collider in colliders)
         {
-            if (!collider.TryGetComponent(out Weapon weapon)) continue;
+            if (!collider.TryGetComponent(out Item weapon)) continue;
             if (!(Vector2.Distance(agent.transform.position, weapon.transform.position) <= detectionRadius)) continue;
             
             closestWeapon = weapon.gameObject;

@@ -4,7 +4,7 @@ public class BTThrowSmokeBomb : BTBaseNode
 {
     private readonly GameObject smokeBombPrefab;
     private readonly Transform throwPoint;
-    private Transform enemyTransform;
+    private readonly Transform enemyTransform;
 
     public BTThrowSmokeBomb(GameObject _smokeBombPrefab, Transform _throwPoint, Transform _enemyTransform)
     {

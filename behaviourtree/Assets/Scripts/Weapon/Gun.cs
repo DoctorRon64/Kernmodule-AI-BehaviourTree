@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class Gun : Weapon
+public class Gun : Item
 {
     [Header("Shooting")] 
     [SerializeField] private GameObject bulletPrefab;

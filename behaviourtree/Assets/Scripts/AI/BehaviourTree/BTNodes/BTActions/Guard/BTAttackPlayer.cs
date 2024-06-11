@@ -24,7 +24,7 @@ public class BTAttackPlayer : BTBaseNode
     protected override void OnEnter()
     {
         EventManager.InvokeEvent(EventType.GuardText, GetType().Name);
-        if (gun == null) gun = (Gun)owner.Weapon;
+        if (gun == null) gun = (Gun)owner.item;
         shootAmoount = 0;
     }
 

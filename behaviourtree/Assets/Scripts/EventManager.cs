@@ -7,6 +7,7 @@ public enum EventType
     NinjaText,
     AttackerTarget,
     OnPlayerDied,
+    OnPlayerAttack
 }
 
 public static class EventManager

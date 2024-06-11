@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-public class Weapon : MonoBehaviour, IPickupable
+public class Item : MonoBehaviour, IPickupable
 {
     public void Pickup()
     {

@@ -25,6 +25,7 @@ public class Ninja : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         coverPoints = FindObjectsOfType<CoverPoint>().Select(_coverPoints => _coverPoints.transform).ToArray();
         EventManager.AddListener<Transform>(EventType.AttackerTarget, SetAttacker);
+        EventManager.AddListener<bool>(EventType.OnPlayerAttack, PlayerBeingAttacked);
         this.SetupBlackboard();
     }
 
@@ -42,7 +43,7 @@ public class Ninja : MonoBehaviour
         tree = new BTRepeater(coverPoints.Length,
             new BTSelector(
                 new BTConditional(
-                    () => currentAttacker != null,
+                    () => isPlayerBeingAttacked,
                     new BTSequence(
                         new BTFindCover(coverPoints, transform),
                         new BTMoveToCover(agent, ninjaText, moveSpeed, coverKeepDistance),
@@ -72,9 +73,9 @@ public class Ninja : MonoBehaviour
         TaskStatus result = tree.Tick();
     }
 
-    private void PlayerBeingAttacked()
+    private void PlayerBeingAttacked(bool _newValue)
     {
-        isPlayerBeingAttacked = true;
+        isPlayerBeingAttacked = _newValue;
         Debug.Log("Player Attacking = " + isPlayerBeingAttacked);
     }
 

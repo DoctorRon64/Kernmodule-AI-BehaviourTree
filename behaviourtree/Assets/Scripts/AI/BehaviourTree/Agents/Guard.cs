@@ -4,21 +4,18 @@ using UnityEngine.AI;
 
 public class Guard : MonoBehaviour
 {
-    [Header("Patrol")] 
-    [SerializeField] private float moveSpeed = 3f;
+    [Header("Patrol")] [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float keepPatrolDistance = 1f;
 
-    [Header("Weapon")] 
-    [SerializeField] private float weaponKeepDistance = 1f;
+    [Header("Weapon")] [SerializeField] private float weaponKeepDistance = 1f;
     [SerializeField] private float weaponDetectInRange = 15f;
     [SerializeField] private Transform shootingPoint;
 
-    [Header("Player")] 
-    [SerializeField] private float playerKeepDistance = 1f;
+    [Header("Player")] [SerializeField] private float playerKeepDistance = 1f;
     [SerializeField] private float playerKeepAttackDistance = 2f;
     [SerializeField] private float playerDetectInRange = 5f;
 
-    public Weapon Weapon = null;
+    public Item item = null;
 
     private Transform[] wayPoints;
     private BTBaseNode tree;
@@ -35,7 +32,7 @@ public class Guard : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         wayPoints = FindObjectsOfType<WayPoint>().Select(_waypoint => _waypoint.transform).ToArray();
-        guardText  = EventType.GuardText;
+        guardText = EventType.GuardText;
         EventManager.AddListener<bool>(EventType.OnPlayerDied, PlayerDeadToggle);
         this.SetupBlackboard();
     }
@@ -58,8 +55,8 @@ public class Guard : MonoBehaviour
                 new BTConditional(() => isPickingUpWeapon,
                     new BTSequence(
                         new BTGetClosestWeaponPos(agent, weaponDetectInRange),
-                        new BTMoveToWeapon(agent,guardText ,moveSpeed, weaponKeepDistance),
-                        new BTMoveToPlayer(agent,guardText, moveSpeed, playerKeepDistance),
+                        new BTMoveToWeapon(agent, guardText, moveSpeed, weaponKeepDistance),
+                        new BTMoveToPlayer(agent, guardText, moveSpeed, playerKeepDistance),
                         new BTAction(() =>
                         {
                             isPickingUpWeapon = false;
@@ -73,15 +70,10 @@ public class Guard : MonoBehaviour
                     new BTSelector(
                         new BTConditional(IsPlayerNearby,
                             new BTSequence(
-                                new BTMoveToPlayer(agent, guardText ,moveSpeed, playerKeepAttackDistance),
-                                new BTAttackPlayer((Gun)Weapon, this, shootingPoint)
+                                new BTMoveToPlayer(agent, guardText, moveSpeed, playerKeepAttackDistance),
+                                new BTAttackPlayer((Gun)item, this, shootingPoint)
                             )
                         ),
-                        new BTAction(() =>
-                        {
-                            ResetAttacker();
-                            return TaskStatus.Success;
-                        }),
                         new BTConditional(() => !isPlayerDead && !IsPlayerNearby(), CreatePatrolSequence())
                     )
                 ),
@@ -93,7 +85,7 @@ public class Guard : MonoBehaviour
                             return TaskStatus.Success;
                         }),
                         new BTGetClosestWeaponPos(agent, weaponDetectInRange),
-                        new BTMoveToWeapon(agent, guardText ,moveSpeed, weaponKeepDistance)
+                        new BTMoveToWeapon(agent, guardText, moveSpeed, weaponKeepDistance)
                     )
                 )
             )
@@ -108,11 +100,6 @@ public class Guard : MonoBehaviour
         EventManager.RemoveAllListeners();
     }
 
-    private void ResetAttacker()
-    {
-        EventManager.InvokeEvent<Transform>(EventType.AttackerTarget, null);
-    }
-    
     private void FixedUpdate()
     {
         if (breakPoint)
@@ -146,7 +133,7 @@ public class Guard : MonoBehaviour
 
     private bool HasWeapon()
     {
-        return Weapon != null;
+        return item != null;
     }
 
     private void OnTriggerEnter2D(Collider2D _other)
@@ -154,15 +141,20 @@ public class Guard : MonoBehaviour
         if (!_other.TryGetComponent(out IPickupable pickup)) return;
         pickup.Pickup();
 
-        if (pickup is not Weapon weapon) return;
-        Weapon = weapon;
+        if (pickup is not Item weapon) return;
+        item = weapon;
     }
-    
+
     private BTSequence CreatePatrolSequence()
     {
         return new BTSequence(
             new BTGetNextPatrolPosition(wayPoints),
-            new BTMoveToPatrolPoint(agent, guardText ,moveSpeed, keepPatrolDistance)
+            new BTMoveToPatrolPoint(agent, guardText, moveSpeed, keepPatrolDistance),
+            new BTAction(() =>
+            {
+                EventManager.InvokeEvent(EventType.OnPlayerAttack, false);
+                return TaskStatus.Success;
+            })
         );
     }
 }
