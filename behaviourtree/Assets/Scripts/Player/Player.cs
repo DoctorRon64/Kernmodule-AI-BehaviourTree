@@ -44,7 +44,6 @@ public class Player : MonoBehaviour, IDamageable
     public void TakeDamage(int _damage)
     {
         if (invulnerable) return;
-        EventManager.InvokeEvent(EventType.OnPlayerAttacked);
 
         Health -= _damage;
         

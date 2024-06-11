@@ -13,10 +13,10 @@ public class Guard : MonoBehaviour
     [SerializeField] private float weaponDetectInRange = 15f;
     [SerializeField] private Transform shootingPoint;
 
-    [Header("Player")] [SerializeField] private float playerKeepDistance = 1f;
-    [SerializeField] private float playerDetectInRange = 6f;
-    [SerializeField] private float playerDetectInAttackRange = 6f;
-    [SerializeField] private float playerDetectOutRange = 5f;
+    [Header("Player")] 
+    [SerializeField] private float playerKeepDistance = 1f;
+    [SerializeField] private float playerKeepAttackDistance = 2f;
+    [SerializeField] private float playerDetectInRange = 5f;
 
     public Weapon Weapon = null;
 
@@ -24,6 +24,8 @@ public class Guard : MonoBehaviour
     private BTBaseNode tree;
     private NavMeshAgent agent;
     private Blackboard blackboard;
+
+    private EventType guardText;
 
     private bool isPickingUpWeapon = false;
     private bool isPlayerDead = false;
@@ -33,6 +35,8 @@ public class Guard : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         wayPoints = FindObjectsOfType<WayPoint>().Select(_waypoint => _waypoint.transform).ToArray();
+        guardText  = EventType.GuardText;
+        EventManager.AddListener<bool>(EventType.OnPlayerDied, PlayerDeadToggle);
         this.SetupBlackboard();
     }
 
@@ -45,18 +49,17 @@ public class Guard : MonoBehaviour
 
         Player player = FindObjectOfType<Player>();
         blackboard.SetVariable(VariableNames.TargetPlayer, player.gameObject);
-        EventManager.AddListener<bool>(EventType.OnPlayerDied, PlayerDeadToggle);
     }
 
     private void Start()
     {
-        tree = new BTRepeater(-1, // Repeat indefinitely
+        tree = new BTRepeater(wayPoints.Length, // Repeat indefinitely
             new BTSelector(
                 new BTConditional(() => isPickingUpWeapon,
                     new BTSequence(
                         new BTGetClosestWeaponPos(agent, weaponDetectInRange),
-                        new BTMoveToWeapon(agent, moveSpeed, weaponKeepDistance),
-                        new BTMoveToPlayer(agent, moveSpeed, playerKeepDistance),
+                        new BTMoveToWeapon(agent,guardText ,moveSpeed, weaponKeepDistance),
+                        new BTMoveToPlayer(agent,guardText, moveSpeed, playerKeepDistance),
                         new BTAction(() =>
                         {
                             isPickingUpWeapon = false;
@@ -70,10 +73,15 @@ public class Guard : MonoBehaviour
                     new BTSelector(
                         new BTConditional(IsPlayerNearby,
                             new BTSequence(
-                                new BTAttackPlayer((Gun)Weapon, this, shootingPoint),
-                                new BTMoveToPlayer(agent, moveSpeed, playerDetectInAttackRange)
+                                new BTMoveToPlayer(agent, guardText ,moveSpeed, playerKeepAttackDistance),
+                                new BTAttackPlayer((Gun)Weapon, this, shootingPoint)
                             )
                         ),
+                        new BTAction(() =>
+                        {
+                            ResetAttacker();
+                            return TaskStatus.Success;
+                        }),
                         new BTConditional(() => !isPlayerDead && !IsPlayerNearby(), CreatePatrolSequence())
                     )
                 ),
@@ -85,7 +93,7 @@ public class Guard : MonoBehaviour
                             return TaskStatus.Success;
                         }),
                         new BTGetClosestWeaponPos(agent, weaponDetectInRange),
-                        new BTMoveToWeapon(agent, moveSpeed, weaponKeepDistance)
+                        new BTMoveToWeapon(agent, guardText ,moveSpeed, weaponKeepDistance)
                     )
                 )
             )
@@ -100,6 +108,11 @@ public class Guard : MonoBehaviour
         EventManager.RemoveAllListeners();
     }
 
+    private void ResetAttacker()
+    {
+        EventManager.InvokeEvent<Transform>(EventType.AttackerTarget, null);
+    }
+    
     private void FixedUpdate()
     {
         if (breakPoint)
@@ -149,7 +162,7 @@ public class Guard : MonoBehaviour
     {
         return new BTSequence(
             new BTGetNextPatrolPosition(wayPoints),
-            new BTMoveToPatrolPoint(agent, moveSpeed, keepPatrolDistance)
+            new BTMoveToPatrolPoint(agent, guardText ,moveSpeed, keepPatrolDistance)
         );
     }
 }

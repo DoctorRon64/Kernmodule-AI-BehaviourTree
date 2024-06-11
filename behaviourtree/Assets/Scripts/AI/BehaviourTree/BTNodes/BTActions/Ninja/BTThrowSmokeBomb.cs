@@ -2,15 +2,21 @@
 
 public class BTThrowSmokeBomb : BTBaseNode
 {
-    private readonly Transform enemyTransform;
     private readonly GameObject smokeBombPrefab;
     private readonly Transform throwPoint;
+    private Transform enemyTransform;
 
-    public BTThrowSmokeBomb(Transform _enemyTransform, GameObject _smokeBombPrefab, Transform _throwPoint)
+    public BTThrowSmokeBomb(GameObject _smokeBombPrefab, Transform _throwPoint, Transform _enemyTransform)
     {
-        enemyTransform = _enemyTransform;
         smokeBombPrefab = _smokeBombPrefab;
         throwPoint = _throwPoint;
+        enemyTransform = _enemyTransform;
+    }
+
+    protected override void OnEnter()
+    {
+        base.OnEnter();
+        EventManager.InvokeEvent(EventType.NinjaText, GetType().Name);
     }
 
     protected override TaskStatus OnUpdate()

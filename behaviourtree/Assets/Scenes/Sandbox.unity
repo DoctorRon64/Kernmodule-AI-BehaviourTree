@@ -174,7 +174,7 @@ MonoBehaviour:
   walkSpeed: 3
   sprintSpeed: 6
   rotationSpeed: 7
-  maxHealth: 10
+  maxHealth: 50
   invulnerable: 0
 --- !u!61 &44315763
 BoxCollider2D:
@@ -1230,10 +1230,9 @@ MonoBehaviour:
   weaponKeepDistance: 1
   weaponDetectInRange: 15
   shootingPoint: {fileID: 1220419921}
-  playerKeepDistance: 2
-  playerDetectInRange: 4
-  playerDetectInAttackRange: 6
-  playerDetectOutRange: 5
+  playerKeepDistance: 1
+  playerKeepAttackDistance: 3
+  playerDetectInRange: 5
   Weapon: {fileID: 0}
 --- !u!195 &339776194
 NavMeshAgent:
@@ -1254,7 +1253,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 1
-  m_BaseOffset: 0.5
+  m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &339776195
@@ -1308,7 +1307,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 1
-  m_BaseOffset: 0.5
+  m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &464419936
@@ -1398,8 +1397,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
-  playerDetectRange: 1
-  playerKeepDistance: 1
+  playerDetectRange: 50
+  playerKeepDistance: 2
+  coverKeepDistance: 0.4
   maxFollowDistance: 3
   smokeBombPrefab: {fileID: 1609661195826595782, guid: a8b2136797216bc41a0e842a2ef4d1c8, type: 3}
   throwPoint: {fileID: 798058011}

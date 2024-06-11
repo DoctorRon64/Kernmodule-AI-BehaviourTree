@@ -3,37 +3,34 @@ using System.Collections.Generic;
 using Unity.Services.Analytics.Internal;
 using UnityEngine;
 using UnityEngine.AI;
+using Event = UnityEngine.Event;
 
 public class BTMoveToPosition : BTBaseNode
 {
     private readonly NavMeshAgent agent;
     private readonly float moveSpeed;
     private readonly float keepDistance;
+    private readonly EventType eventType;
     protected Vector3 TargetPosition;
 
-    protected BTMoveToPosition(NavMeshAgent _agent, float _moveSpeed, float _keepDistance)
+    protected BTMoveToPosition(NavMeshAgent _agent, EventType _eventType ,float _moveSpeed, float _keepDistance)
     {
         this.agent = _agent;
         this.moveSpeed = _moveSpeed;
         this.keepDistance = _keepDistance;
+        eventType = _eventType;
     }
 
     protected override void OnEnter()
     {
-        EventManager.InvokeEvent(EventType.GuardText, GetType().Name);
+        EventManager.InvokeEvent(eventType, GetType().Name);
         
         if (agent == null) { Debug.LogError("NavMeshAgent is null!"); return; }
 
-        //TargetPosition.z = agent.transform.position.z;
         agent.speed = moveSpeed;
         agent.updatePosition = false;
         agent.stoppingDistance = keepDistance;
         agent.SetDestination(TargetPosition);
-        
-        //if (!NavMesh.SamplePosition(TargetPosition, out NavMeshHit hit, 1.0f, NavMesh.AllAreas)) { Debug.LogError("Invalid Target Position!"); return; }
-        
-        Debug.Log(moveSpeed + "speed");
-        Debug.Log(agent.stoppingDistance + "Distancestop");
     }
 
     protected override TaskStatus OnUpdate()
@@ -45,7 +42,7 @@ public class BTMoveToPosition : BTBaseNode
         TargetPosition.z = 0;
         agent.speed = moveSpeed;
         agent.stoppingDistance = keepDistance;
-        //Debug.Log("target destiiniatiiion = " + TargetPosition);
+
         if ((Vector2)agent.destination != (Vector2)TargetPosition)
         {
             agent.SetDestination(TargetPosition);
@@ -58,7 +55,7 @@ public class BTMoveToPosition : BTBaseNode
         Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         agent.transform.rotation = rotation;
 
-        if (agent.remainingDistance <= keepDistance)// Vector2.Distance(agent.transform.position, TargetPosition) <= keepDistance)
+        if (agent.remainingDistance <= keepDistance)
         {
             return TaskStatus.Success;
         }

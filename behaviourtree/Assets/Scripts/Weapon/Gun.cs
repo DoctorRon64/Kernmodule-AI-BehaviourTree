@@ -30,7 +30,7 @@ public class Gun : Weapon
 
         nextFireTime = Time.time + fireRate;
         Bullet bullet = (Bullet)bulletPool.RequestObject(_shootingPoint.position);
-
+        
         if (bullet == null) return;
         bullet.SetDirection(_direction, bulletSpeed);
         bullet.SetRotation(_direction);

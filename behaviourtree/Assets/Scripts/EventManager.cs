@@ -5,8 +5,8 @@ public enum EventType
 {
     GuardText,
     NinjaText,
+    AttackerTarget,
     OnPlayerDied,
-    OnPlayerAttacked,
 }
 
 public static class EventManager

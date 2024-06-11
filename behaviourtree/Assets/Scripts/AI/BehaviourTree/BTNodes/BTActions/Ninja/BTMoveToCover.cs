@@ -3,8 +3,8 @@ using UnityEngine.AI;
 
 public class BTMoveToCover : BTMoveToPosition
 {
-    public BTMoveToCover(NavMeshAgent _agent, float _moveSpeed, float _keepDistance)
-        : base(_agent, _moveSpeed, _keepDistance)
+    public BTMoveToCover(NavMeshAgent _agent, EventType _eventType, float _moveSpeed, float _keepDistance) 
+        : base(_agent, _eventType ,_moveSpeed, _keepDistance)
     {
         
     }

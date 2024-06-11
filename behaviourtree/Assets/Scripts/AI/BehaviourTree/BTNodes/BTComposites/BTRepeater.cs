@@ -3,20 +3,32 @@
 ///
 public class BTRepeater : BTDecorator
 {
-    private int amount = 0;
-    private int currentLoop = 0;
-    public BTRepeater(int _amount, BTBaseNode _child) : base(_child){ this.amount = _amount; }
+    private readonly int amount;
+    private int currentLoop;
+
+    public BTRepeater(int _amount, BTBaseNode _child) : base(_child)
+    {
+        this.amount = _amount;
+    }
 
     protected override TaskStatus OnUpdate()
     {
-        if(child.Tick() != TaskStatus.Running)
+        TaskStatus childStatus = child.Tick();
+        if (childStatus != TaskStatus.Running)
         {
             currentLoop++;
+            if (amount == -1 || currentLoop < amount)
+            {
+                child.OnReset();
+                return TaskStatus.Running;
+            }
         }
-        if (currentLoop >= amount)
+
+        if (amount != -1 && currentLoop >= amount)
         {
             return TaskStatus.Success;
         }
+
         return TaskStatus.Running;
     }
 
@@ -32,8 +44,7 @@ public class BTRepeater : BTDecorator
 
     public override void OnReset()
     {
-        amount = 0;
+        currentLoop = 0;
         child.OnReset();
     }
 }
-

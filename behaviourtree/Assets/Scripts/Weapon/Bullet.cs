@@ -4,9 +4,11 @@ public class Bullet : MonoBehaviour, IPoolable
 {
 	private Rigidbody2D rb;
 	private ObjectPool<Bullet> objectPool;
+	public Transform owner;
+	
 	public bool Active { get; set; }
 	private readonly int damageValue = 1;
-
+	
 	public void SetupBullet(ObjectPool<Bullet> _pool)
 	{
 		rb = GetComponent<Rigidbody2D>();

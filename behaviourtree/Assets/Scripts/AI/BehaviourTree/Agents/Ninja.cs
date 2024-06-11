@@ -7,45 +7,52 @@ public class Ninja : MonoBehaviour
     [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float playerDetectRange = 1f;
     [SerializeField] private float playerKeepDistance = 1f;
+    [SerializeField] private float coverKeepDistance = 0.4f;
     [SerializeField] private float maxFollowDistance = 3f;
     [SerializeField] private GameObject smokeBombPrefab;
     [SerializeField] private Transform throwPoint;
-    
+
     private Transform[] coverPoints;
     private BTBaseNode tree;
     private NavMeshAgent agent;
     private Blackboard blackboard;
 
+    private Transform currentAttacker = null;
     private bool isPlayerBeingAttacked = false;
-    
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        coverPoints = FindObjectsOfType<WayPoint>().Select(_coverPoints => _coverPoints.transform).ToArray();
-        
+        coverPoints = FindObjectsOfType<CoverPoint>().Select(_coverPoints => _coverPoints.transform).ToArray();
+        EventManager.AddListener<Transform>(EventType.AttackerTarget, SetAttacker);
+        this.SetupBlackboard();
+    }
+
+    private void SetupBlackboard()
+    {
         Player player = FindObjectOfType<Player>();
         blackboard = new Blackboard();
         blackboard.SetVariable(VariableNames.TargetPlayer, player.gameObject);
-        
-        EventManager.AddListener(EventType.OnPlayerAttacked, PlayerBeingAttacked);
     }
 
     private void Start()
     {
-        tree = new BTRepeater(-1,
+        EventType ninjaText = EventType.NinjaText;
+
+        tree = new BTRepeater(coverPoints.Length,
             new BTSelector(
                 new BTConditional(
-                    () => IsPlayerInHood(playerDetectRange, transform.position),
+                    () => currentAttacker != null,
                     new BTSequence(
-                        new BTMoveToPlayer(agent, moveSpeed, maxFollowDistance)
+                        new BTFindCover(coverPoints, transform),
+                        new BTMoveToCover(agent, ninjaText, moveSpeed, coverKeepDistance),
+                        new BTThrowSmokeBomb(smokeBombPrefab, throwPoint, currentAttacker)
                     )
                 ),
                 new BTConditional(
-                    () => isPlayerBeingAttacked,
+                    () => IsPlayerInHood(playerDetectRange, transform.position),
                     new BTSequence(
-                        new BTFindCover(coverPoints, transform),
-                        new BTMoveToCover(agent, moveSpeed, playerKeepDistance),
-                        new BTThrowSmokeBomb(AttackContext.CurrentAttacker.transform, smokeBombPrefab, throwPoint)
+                        new BTMoveToPlayer(agent, ninjaText, moveSpeed, maxFollowDistance)
                     )
                 )
             )
@@ -56,13 +63,19 @@ public class Ninja : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (tree == null)
+        {
+            Debug.LogError("Behavior tree is not initialized.");
+            return;
+        }
+
         TaskStatus result = tree.Tick();
     }
 
     private void PlayerBeingAttacked()
     {
-        Debug.Log("player is getting Attacked!");
-        isPlayerBeingAttacked = !isPlayerBeingAttacked;
+        isPlayerBeingAttacked = true;
+        Debug.Log("Player Attacking = " + isPlayerBeingAttacked);
     }
 
     private bool IsPlayerInHood(float _range, Vector3 _position)
@@ -73,9 +86,10 @@ public class Ninja : MonoBehaviour
         float distanceToPlayer = Vector3.Distance(_position, player.transform.position);
         return distanceToPlayer <= _range;
     }
-}
 
-public static class AttackContext
-{
-    public static GameObject CurrentAttacker { get; set; }
+    private void SetAttacker(Transform _transform)
+    {
+        currentAttacker = _transform;
+        Debug.Log("Current Attacker = " + currentAttacker);
+    }
 }

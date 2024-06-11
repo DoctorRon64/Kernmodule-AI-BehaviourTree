@@ -23,7 +23,6 @@ public class BTAttackPlayer : BTBaseNode
 
     protected override void OnEnter()
     {
-        AttackContext.CurrentAttacker = null; 
         EventManager.InvokeEvent(EventType.GuardText, GetType().Name);
         if (gun == null) gun = (Gun)owner.Weapon;
         shootAmoount = 0;
@@ -40,7 +39,7 @@ public class BTAttackPlayer : BTBaseNode
         //shoot
         Vector2 direction = (playerTransform.position - owner.transform.position).normalized;
         gun.ShootBullet(direction, shootingPoint);
-        AttackContext.CurrentAttacker = owner.gameObject;
+        EventManager.InvokeEvent(EventType.AttackerTarget, owner.transform);
         
         //rotate
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
@@ -54,6 +53,6 @@ public class BTAttackPlayer : BTBaseNode
     protected override void OnExit()
     {
         base.OnExit();
-        AttackContext.CurrentAttacker = null; 
+        EventManager.InvokeEvent<Transform>(EventType.AttackerTarget, null);
     }
 }

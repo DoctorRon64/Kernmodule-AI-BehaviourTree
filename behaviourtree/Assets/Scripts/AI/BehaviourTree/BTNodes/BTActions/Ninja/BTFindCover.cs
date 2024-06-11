@@ -11,6 +11,12 @@ public class BTFindCover : BTBaseNode
         agentTransform = _agentTransform;
     }
 
+    protected override void OnEnter()
+    {
+        base.OnEnter();
+        EventManager.InvokeEvent(EventType.NinjaText, GetType().Name);
+    }
+
     protected override TaskStatus OnUpdate()
     {
         Transform nearestCover = null;
