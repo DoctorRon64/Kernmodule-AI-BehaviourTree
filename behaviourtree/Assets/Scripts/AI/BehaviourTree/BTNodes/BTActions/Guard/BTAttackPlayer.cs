@@ -23,6 +23,7 @@ public class BTAttackPlayer : BTBaseNode
     protected override void OnEnter()
     {
         EventManager.InvokeEvent(EventType.GuardText, GetType().Name);
+        EventManager.InvokeEvent(EventType.AttackerTarget, owner.transform);
         if (gun == null) gun = (Gun)owner.item;
     }
 
@@ -37,13 +38,11 @@ public class BTAttackPlayer : BTBaseNode
         //shoot
         Vector2 direction = (playerTransform.position - owner.transform.position).normalized;
         gun.ShootBullet(direction, shootingPoint);
-        EventManager.InvokeEvent(EventType.AttackerTarget, owner.transform);
         
         //rotate
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         Quaternion rotation = Quaternion.Euler(0f, 0f, angle); 
         owner.transform.rotation = rotation;
-
         
         return TaskStatus.Success;
     }

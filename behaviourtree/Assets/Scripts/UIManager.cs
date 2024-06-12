@@ -24,6 +24,8 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] private List<AgentText> agentTexts = new List<AgentText>();
     [SerializeField] private PlayerSlider hpSlider;
+    [SerializeField] private Toggle fullscreenToggle;
+    [SerializeField] private Image backgroundToggle;
     
     private void Awake()
     {
@@ -32,6 +34,7 @@ public class UIManager : MonoBehaviour
         EventManager.AddListener<int>(EventType.OnPlayerHpChanged, UpdateHpSlider);
         EventManager.AddListener<bool>(EventType.OnPlayerDied, OnPlayerDied);
         hpSlider.slider.value = hpSlider.slider.maxValue;
+        fullscreenToggle.onValueChanged.AddListener(OnToggleValueChanged);
     }
 
     private void Update()
@@ -47,15 +50,24 @@ public class UIManager : MonoBehaviour
             Vector3 targetPos2 = hpSlider.player.position + hpSlider.Offset;
             hpSlider.slider.transform.position = targetPos2;
         }
+    }
 
+    private void OnDisable()
+    {
+        fullscreenToggle.onValueChanged.RemoveAllListeners();
+    }
+
+    private void OnToggleValueChanged(bool _isOn)
+    {
+        Screen.fullScreen = _isOn;
+        backgroundToggle.enabled = !_isOn;
     }
     
-    private void OnPlayerDied(bool isDead)
+    private void OnPlayerDied(bool _isDead)
     {
-        if (isDead)
-        {
-            hpSlider.player = null;
-        }
+        if (!_isDead) return;
+        hpSlider.player = null;
+        hpSlider.slider.gameObject.SetActive(false);
     }
 
 

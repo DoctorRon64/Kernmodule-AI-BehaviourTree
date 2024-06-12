@@ -43,7 +43,7 @@ public class Ninja : MonoBehaviour
 
     private void Start()
     {
-        BombController bombController = new BombController(smokeBombPrefab, bombAmount, throwForce, fireRate);
+        BombController bombController = new(smokeBombPrefab, bombAmount, throwForce, fireRate);
         const EventType ninjaText = EventType.NinjaText;
 
         tree = new BTRepeater(coverPoints.Length,

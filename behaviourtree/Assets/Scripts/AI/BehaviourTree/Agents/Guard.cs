@@ -9,20 +9,19 @@ public class Guard : MonoBehaviour, IStunnable
     [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float keepPatrolDistance = 1f;
 
-    [Header("Weapon")]
+    [Header("Weapon")] 
     [SerializeField] private float weaponKeepDistance = 1f;
     [SerializeField] private float weaponDetectInRange = 15f;
     [SerializeField] private Transform shootingPoint;
 
-    [Header("Player")]
+    [Header("Player")] 
     [SerializeField] private float playerKeepDistance = 1f;
     [SerializeField] private float playerKeepAttackDistance = 2f;
     [SerializeField] private float playerDetectInRange = 5f;
-    
-    [Header("Stun")]
+
+    [Header("Stun")] 
     [SerializeField] private float stunDelay = 5f;
-    private Coroutine resetStunCoroutine;
-    
+
     public Item item = null;
 
     private Transform[] wayPoints;
@@ -30,13 +29,12 @@ public class Guard : MonoBehaviour, IStunnable
     private NavMeshAgent agent;
     private Blackboard blackboard;
     private ParticleSystem particles;
-
+    
     private const EventType guardText = EventType.GuardText;
 
     private bool isPickingUpWeapon = false;
     private bool isPlayerDead = false;
     private bool breakPoint = false;
-    private bool isGuardStunned = false;
 
     private void Awake()
     {
@@ -53,8 +51,10 @@ public class Guard : MonoBehaviour, IStunnable
         blackboard.SetVariable(VariableNames.EnemyHealth, 100);
         blackboard.SetVariable(VariableNames.TargetPatrolPosition, new Vector3(0, 0, 0));
         blackboard.SetVariable(VariableNames.CurrentPatrolIndex, -1);
+        blackboard.SetVariable(VariableNames.GuardStunned, false);
 
         Player player = FindObjectOfType<Player>();
+        if (player == null) Debug.LogError("noplayerfound");
         blackboard.SetVariable(VariableNames.TargetPlayer, player.gameObject);
     }
 
@@ -62,6 +62,7 @@ public class Guard : MonoBehaviour, IStunnable
     {
         tree = new BTRepeater(wayPoints.Length, // Repeat indefinitely
             new BTSelector(
+                new BTConditional(IsGuardStunned, new BTStunNode()),
                 new BTConditional(() => isPickingUpWeapon,
                     new BTSequence(
                         new BTGetClosestWeaponPos(agent, weaponDetectInRange),
@@ -112,18 +113,19 @@ public class Guard : MonoBehaviour, IStunnable
 
     private void FixedUpdate()
     {
-        if (isGuardStunned)
-        {
-            return;
-        }
-        
         if (breakPoint)
         {
+            Debug.LogWarning("breakpoint");
             tree.OnReset();
             breakPoint = false;
         }
 
         TaskStatus result = tree.Tick();
+    }
+
+    private bool IsGuardStunned()
+    {
+        return blackboard.GetVariable<bool>(VariableNames.GuardStunned);
     }
 
     private void PlayerDeadToggle(bool _toggle)
@@ -170,19 +172,22 @@ public class Guard : MonoBehaviour, IStunnable
 
     public void Stun()
     {
-        isGuardStunned = true;
-        particles.Play();
+        blackboard.SetVariable(VariableNames.GuardStunned, true);
         
-        EventManager.InvokeEvent(EventType.GuardText, "Guard Is Stunned!");
-        if (resetStunCoroutine != null) StopCoroutine(resetStunCoroutine);
-        resetStunCoroutine = StartCoroutine(ResetStun());
+        StopAllCoroutines();
+        StartCoroutine(StunCoroutine());
     }
 
-    private IEnumerator ResetStun()
+    private IEnumerator StunCoroutine()
     {
+        blackboard.SetVariable(VariableNames.GuardStunned, true);
+        EventManager.InvokeEvent(EventType.GuardText, "Guard is Stunned!");
+        particles.Play();
+        
         yield return new WaitForSeconds(stunDelay);
-        isGuardStunned = false;
-        if (particles.isPlaying) particles.Stop();
-        EventManager.InvokeEvent(EventType.GuardText, "Guard Recoverd from stun");
+        
+        EventManager.InvokeEvent(EventType.GuardText, "Guard is free again!");
+        blackboard.SetVariable(VariableNames.GuardStunned, false);
+        particles.Stop();
     }
 }

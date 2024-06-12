@@ -209,6 +209,8 @@ MonoBehaviour:
   rotationSpeed: 7
   maxHealth: 20
   invulnerable: 0
+  bulletDetectionRadius: 3
+  isBeingAttackedCooldown: 1
 --- !u!95 &40639872033938417
 Animator:
   serializedVersion: 5

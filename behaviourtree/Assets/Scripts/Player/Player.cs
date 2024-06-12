@@ -79,8 +79,8 @@ public class Player : MonoBehaviour, IDamageable
         EventManager.InvokeEvent(EventType.OnPlayerDied, true);
         Destroy(gameObject);
     }
-    
-    public void CheckForBullets()
+
+    private void CheckForBullets()
     {
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, bulletDetectionRadius);
         foreach (var hitCollider in hitColliders)
