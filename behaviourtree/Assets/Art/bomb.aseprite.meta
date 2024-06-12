@@ -123,15 +123,15 @@ ScriptedImporter:
   animatedSpriteImportData:
   - name: bomb
     originalName: 
-    pivot: {x: 0.6086957, y: 0}
+    pivot: {x: 0.55263156, y: -0.016129032}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
       x: 4
       y: 4
-      width: 46
-      height: 64
+      width: 38
+      height: 62
     spriteID: 39e07afdddb72e24693ac70296937a88
     spriteBone: []
     spriteOutline: []
@@ -153,10 +153,10 @@ ScriptedImporter:
     - name: bomb
       frameIndex: 0
       cellRect:
-        x: 4
-        y: 0
-        width: 46
-        height: 64
+        x: 11
+        y: 1
+        width: 38
+        height: 62
       spriteId: 39e07afdddb72e24693ac70296937a88
     linkedCells: []
     parentIndex: -1

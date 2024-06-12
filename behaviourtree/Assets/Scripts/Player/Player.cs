@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class Player : MonoBehaviour, IDamageable
 {
@@ -7,11 +8,25 @@ public class Player : MonoBehaviour, IDamageable
     [SerializeField] private float rotationSpeed = 2.0f;
     [SerializeField] private int maxHealth = 30;
     [SerializeField] private bool invulnerable = false;
-    
-    public int Health { get; set; }
+
+    [SerializeField] private float bulletDetectionRadius = 3f;
+    [SerializeField] private float isBeingAttackedCooldown = 2.5f;
+
+    private int health;
+    public int Health
+    {
+        get => health;
+        set
+        {
+            if (health == value) return;
+            health = value;
+            EventManager.InvokeEvent(EventType.OnPlayerHpChanged, value);
+        }
+    }
     
     private Rigidbody2D rb2d;
     private Vector2 moveDirection;
+    private Coroutine damageCoroutine;
     
     private void Awake()
     {
@@ -27,6 +42,8 @@ public class Player : MonoBehaviour, IDamageable
         
         float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : walkSpeed;
 
+        CheckForBullets();
+        
         if (moveDirection != Vector2.zero)
         {
             // Move
@@ -43,8 +60,6 @@ public class Player : MonoBehaviour, IDamageable
     public void TakeDamage(int _damage)
     {
         if (invulnerable) return;
-        EventManager.InvokeEvent(EventType.OnPlayerAttack, true);        
-        
         Health -= _damage;
         
         if (Health <= 0)
@@ -52,10 +67,39 @@ public class Player : MonoBehaviour, IDamageable
             Die();
         }
     }
+    
+    private IEnumerator DamageCoroutine()
+    {
+        yield return new WaitForSeconds(isBeingAttackedCooldown);
+        EventManager.InvokeEvent(EventType.OnPlayerAttack, false);
+    }
 
     private void Die()
     {
         EventManager.InvokeEvent(EventType.OnPlayerDied, true);
         Destroy(gameObject);
+    }
+    
+    public void CheckForBullets()
+    {
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, bulletDetectionRadius);
+        foreach (var hitCollider in hitColliders)
+        {
+            if (!hitCollider.TryGetComponent(out Bullet _bullet)) continue;
+            EventManager.InvokeEvent(EventType.OnPlayerAttack, true);
+            if (damageCoroutine != null)
+            {
+                StopCoroutine(damageCoroutine);
+            }
+
+            damageCoroutine = StartCoroutine(DamageCoroutine());
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        // Draw the detection radius for debugging
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, bulletDetectionRadius);
     }
 }

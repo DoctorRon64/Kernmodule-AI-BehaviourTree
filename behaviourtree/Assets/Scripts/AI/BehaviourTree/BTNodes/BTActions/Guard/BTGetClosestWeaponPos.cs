@@ -29,7 +29,6 @@ public class BTGetClosestWeaponPos : BTBaseNode
             
             closestWeapon = weapon.gameObject;
         }
-        Debug.Log("weapon nearby! on pos: " + closestWeapon.transform.position);
         
         if (closestWeapon != null)
         {

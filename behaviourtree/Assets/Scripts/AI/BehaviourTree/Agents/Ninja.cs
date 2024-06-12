@@ -22,12 +22,14 @@ public class Ninja : MonoBehaviour
     private Blackboard blackboard;
 
     private bool isPlayerBeingAttacked = false;
-
+    private bool isPlayerDead = false;
+    
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         coverPoints = FindObjectsOfType<CoverPoint>().Select(_coverPoints => _coverPoints.transform).ToArray();
         EventManager.AddListener<Transform>(EventType.AttackerTarget, SetAttacker);
+        EventManager.AddListener<bool>(EventType.OnPlayerDied, PlayerDeadToggle);
         EventManager.AddListener<bool>(EventType.OnPlayerAttack, PlayerBeingAttacked);
         this.SetupBlackboard();
     }
@@ -52,7 +54,7 @@ public class Ninja : MonoBehaviour
                         new BTSequence(
                             new BTFindCover(coverPoints, transform),
                             new BTMoveToCover(agent, ninjaText, moveSpeed, coverKeepDistance),
-                            new BTThrowSmokeBomb(bombController, throwPoint)
+                            new BTThrowSmokeBomb(agent, bombController, throwPoint)
                         )
                     )
                 ),
@@ -70,6 +72,12 @@ public class Ninja : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (isPlayerDead)
+        {
+            EventManager.InvokeEvent(EventType.NinjaText, "Player Died so now the Ninja is sad!");
+            return;
+        }
+        
         if (tree == null)
         {
             Debug.LogError("Behavior tree is not initialized.");
@@ -77,6 +85,12 @@ public class Ninja : MonoBehaviour
         }
 
         TaskStatus result = tree.Tick();
+    }
+    
+    private void PlayerDeadToggle(bool _toggle)
+    {
+        isPlayerDead = _toggle;
+        Debug.Log("IsPlayerActive SET to: " + _toggle);
     }
 
     private void PlayerBeingAttacked(bool _newValue)
@@ -96,7 +110,6 @@ public class Ninja : MonoBehaviour
 
     private void SetAttacker(Transform _newAttacker)
     {
-        Debug.Log("Current Attacker = " + _newAttacker);
         blackboard.SetVariable(VariableNames.TargetEnemy, _newAttacker);
     }
 }

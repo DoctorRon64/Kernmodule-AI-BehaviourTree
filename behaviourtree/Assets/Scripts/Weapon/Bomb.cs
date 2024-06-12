@@ -1,12 +1,12 @@
-﻿using System;
+﻿using System.Collections;
 using UnityEngine;
-using static VariableNames;
 
 public class Bomb : MonoBehaviour, IPoolable
 {
     private Rigidbody2D rb2d;
     private ObjectPool<Bomb> objectPool;
     public bool Active { get; set; }
+    private Coroutine disableCoroutine;
 
     public void SetupBomb(ObjectPool<Bomb> _pool)
     {
@@ -19,31 +19,38 @@ public class Bomb : MonoBehaviour, IPoolable
         rb2d.velocity = Vector2.zero;
         rb2d.AddForce(_direction.normalized * _force, ForceMode2D.Impulse);
     }
-
     public void SetRotation(Vector2 _direction)
     {
         float angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+    }
+    public void SetPosition(Vector2 _pos)
+    {
+        transform.position = _pos;
     }
 
     private void OnCollisionEnter2D(Collision2D _other)
     {
         if (_other.gameObject.TryGetComponent(out IStunnable stunnable))
         {
-            //if (_other.gameObject.layer == LayerMask.NameToLayer(VariableNames.Player)) return; 
-            
             stunnable.Stun();
-            DisablePoolabe();
             objectPool.DeactivateItem(this);
+            DisablePoolabe();
         }
 
         if (!_other.gameObject.TryGetComponent(out Wall wall)) return;
-        DisablePoolabe();
         objectPool.DeactivateItem(this);
+        DisablePoolabe();
     }
     
     public void DisablePoolabe()
     {
+        if (disableCoroutine != null)
+        {
+            StopCoroutine(disableCoroutine);
+            disableCoroutine = null;
+        }
+        
         rb2d.velocity = Vector2.zero;
         gameObject.SetActive(false);
     }
@@ -52,10 +59,18 @@ public class Bomb : MonoBehaviour, IPoolable
     {
         rb2d.velocity = Vector2.zero;
         gameObject.SetActive(true);
+        
+        if (disableCoroutine != null)
+        {
+            StopCoroutine(disableCoroutine);
+        }
+        disableCoroutine = StartCoroutine(DisableAfterTime(4f));
     }
-
-    public void SetPosition(Vector2 _pos)
+    
+    private IEnumerator DisableAfterTime(float _time)
     {
-        transform.position = _pos;
+        yield return new WaitForSeconds(_time);
+        objectPool.DeactivateItem(this);
+        DisablePoolabe();
     }
 }

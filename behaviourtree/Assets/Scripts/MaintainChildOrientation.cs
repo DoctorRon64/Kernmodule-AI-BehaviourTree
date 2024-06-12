@@ -2,15 +2,17 @@ using UnityEngine;
 
 public class MaintainChildOrientation : MonoBehaviour
 {
-    private Quaternion initialRotation;
+    public Transform parentTransform;
+    public Transform particleSystemTransform;
+    private Vector3 initialLocalPosition;
 
     void Start()
     {
-        initialRotation = transform.localRotation;
+        initialLocalPosition = particleSystemTransform.localPosition;
     }
 
     void Update()
     {
-        transform.localRotation = initialRotation;
+        particleSystemTransform.position = parentTransform.position + initialLocalPosition;
     }
 }

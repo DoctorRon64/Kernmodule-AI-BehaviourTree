@@ -29,8 +29,9 @@ public class Guard : MonoBehaviour, IStunnable
     private BTBaseNode tree;
     private NavMeshAgent agent;
     private Blackboard blackboard;
+    private ParticleSystem particles;
 
-    private EventType guardText;
+    private const EventType guardText = EventType.GuardText;
 
     private bool isPickingUpWeapon = false;
     private bool isPlayerDead = false;
@@ -41,7 +42,7 @@ public class Guard : MonoBehaviour, IStunnable
     {
         agent = GetComponent<NavMeshAgent>();
         wayPoints = FindObjectsOfType<WayPoint>().Select(_waypoint => _waypoint.transform).ToArray();
-        guardText = EventType.GuardText;
+        particles = GetComponentInChildren<ParticleSystem>();
         EventManager.AddListener<bool>(EventType.OnPlayerDied, PlayerDeadToggle);
         this.SetupBlackboard();
     }
@@ -163,21 +164,16 @@ public class Guard : MonoBehaviour, IStunnable
     {
         return new BTSequence(
             new BTGetNextPatrolPosition(wayPoints),
-            new BTMoveToPatrolPoint(agent, guardText, moveSpeed, keepPatrolDistance),
-            new BTAction(() =>
-            {
-                EventManager.InvokeEvent(EventType.OnPlayerAttack, false);
-                return TaskStatus.Success;
-            })
+            new BTMoveToPatrolPoint(agent, guardText, moveSpeed, keepPatrolDistance)
         );
     }
 
     public void Stun()
     {
-        Debug.Log("Character stunned!");
         isGuardStunned = true;
-        EventManager.InvokeEvent(EventType.OnPlayerAttack, false);
+        particles.Play();
         
+        EventManager.InvokeEvent(EventType.GuardText, "Guard Is Stunned!");
         if (resetStunCoroutine != null) StopCoroutine(resetStunCoroutine);
         resetStunCoroutine = StartCoroutine(ResetStun());
     }
@@ -185,8 +181,8 @@ public class Guard : MonoBehaviour, IStunnable
     private IEnumerator ResetStun()
     {
         yield return new WaitForSeconds(stunDelay);
-        
-        Debug.Log("Character recovered from stun!");
         isGuardStunned = false;
+        if (particles.isPlaying) particles.Stop();
+        EventManager.InvokeEvent(EventType.GuardText, "Guard Recoverd from stun");
     }
 }

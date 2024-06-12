@@ -1,16 +1,19 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class BTThrowSmokeBomb : BTBaseNode
 {
     private readonly BombController bombController;
     private readonly Transform throwPoint;
+    private readonly NavMeshAgent agent;
     private Transform enemyTransform;
 
-    public BTThrowSmokeBomb(BombController _bombController, Transform _throwPoint)
+    public BTThrowSmokeBomb(NavMeshAgent _agent ,BombController _bombController, Transform _throwPoint)
     {
         bombController = _bombController;
         throwPoint = _throwPoint;
+        agent = _agent;
     }
 
     protected override void OnEnter()
@@ -30,6 +33,10 @@ public class BTThrowSmokeBomb : BTBaseNode
 
         Vector2 direction = (enemyTransform.position - throwPoint.position).normalized;
         bombController.ThrowBomb(direction, throwPoint);
+        
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        agent.transform.rotation = rotation;
 
         return TaskStatus.Success;
     }
