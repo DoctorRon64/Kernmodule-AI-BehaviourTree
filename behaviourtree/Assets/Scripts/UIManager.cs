@@ -33,6 +33,11 @@ public class UIManager : MonoBehaviour
         EventManager.AddListener<string>(EventType.NinjaText, UpdateNinjaText);
         EventManager.AddListener<int>(EventType.OnPlayerHpChanged, UpdateHpSlider);
         EventManager.AddListener<bool>(EventType.OnPlayerDied, OnPlayerDied);
+
+        bool fullScreenActive = Screen.fullScreen;
+        fullscreenToggle.isOn = fullScreenActive;
+        backgroundToggle.enabled = !fullScreenActive;
+        
         hpSlider.slider.value = hpSlider.slider.maxValue;
         fullscreenToggle.onValueChanged.AddListener(OnToggleValueChanged);
     }
